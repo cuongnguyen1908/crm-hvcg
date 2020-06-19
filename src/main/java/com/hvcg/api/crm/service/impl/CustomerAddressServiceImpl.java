@@ -38,7 +38,6 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     public void createCustomerAddress(CustomerAddressDTO customerAddressDto) {
         Optional<Customer> optionalCustomer = this.customerRepository.findCustomerById(customerAddressDto.getCustomerId(), false);
         if (optionalCustomer.isPresent()) {
-            ModelMapper modelMapper = new ModelMapper();
             CustomerAddress customerAddressEntity = new CustomerAddress();
             customerAddressEntity.setCustomer(optionalCustomer.get());
             customerAddressEntity.setAddress(customerAddressDto.getAddress());

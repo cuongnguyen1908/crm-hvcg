@@ -60,7 +60,6 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<JwtResponseDTO> authenticateUser(@RequestBody LoginDTO dto) {
-        System.out.println("username " + dto.getUsername() + " " + dto.getPassword());
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -81,11 +80,9 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<ResponseDTO> registerUser(@RequestBody SignupDTO dto) {
-//        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-//            return ResponseEntity
-//                    .badRequest()
-//                    .body(new NotFoundException("Error: Username is already taken!"));
-//        }
+        if (userRepository.existsByUsername(dto.getUsername())) {
+            throw new NotFoundException("User has exist");
+        }
 
         System.out.println(dto.getUsername() + " " + dto.getPassword() + " " + dto.getRole());
 

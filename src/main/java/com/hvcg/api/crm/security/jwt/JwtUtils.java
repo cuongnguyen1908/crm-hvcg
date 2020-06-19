@@ -3,6 +3,7 @@ package com.hvcg.api.crm.security.jwt;
 import com.hvcg.api.crm.security.service.UserDetailImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +44,6 @@ public class JwtUtils {
 	}
 
 	public boolean validateJwtToken(String authToken) {
-		System.out.println("in util: " + authToken);
 		try {
 			Jwts.parser().setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
 					.parseClaimsJws(authToken);

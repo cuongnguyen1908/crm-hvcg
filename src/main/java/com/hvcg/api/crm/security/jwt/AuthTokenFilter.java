@@ -1,9 +1,11 @@
 package com.hvcg.api.crm.security.jwt;
 
+import com.google.common.base.Strings;
 import com.hvcg.api.crm.security.service.UserDetailServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +26,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailServiceImpl userDetailService;
 
+    @Value("${application.jwt.tokenPrefix}")
+    private String jwtPreFix;
+
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
 
@@ -31,8 +36,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            String headerValue = ((HttpServletRequest)request).getHeader("Authorization");
-            String token = headerValue.replace("Bearer ", "");
+            String headerValue = request.getHeader("Authorization");
+            if (Strings.isNullOrEmpty(headerValue) || !headerValue.startsWith(jwtPreFix)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+            String token = headerValue.replace(jwtPreFix, "");
+
             if (token != null && jwtUtils.validateJwtToken(token)) {
                 String username = jwtUtils.getUserNameFromJwtToken(token);
 
@@ -50,13 +60,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String parseJwt(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
-
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7, headerAuth.length());
-        }
-
-        return null;
-    }
+//    private String parseJwt(HttpServletRequest request) {
+//        String headerAuth = request.getHeader("Authorization");
+//
+//        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+//            return headerAuth.substring(7, headerAuth.length());
+//        }
+//
+//        return null;
+//    }
 }

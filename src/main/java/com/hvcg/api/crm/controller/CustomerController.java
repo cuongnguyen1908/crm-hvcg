@@ -5,7 +5,6 @@ import com.hvcg.api.crm.dto.ResponseDTO;
 import com.hvcg.api.crm.entity.Customer;
 import com.hvcg.api.crm.exception.NotFoundException;
 
-import com.hvcg.api.crm.service.AvatarService;
 import com.hvcg.api.crm.service.CustomerService;
 
 
@@ -26,8 +25,6 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    @Autowired
-    private AvatarService avatarService;
 
 
     @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
