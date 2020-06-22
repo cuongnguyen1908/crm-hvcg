@@ -3,7 +3,18 @@ package com.hvcg.api.crm.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hvcg.api.crm.constant.ERole;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.GenerationType;
+import javax.persistence.JoinColumn;
+import javax.persistence.GeneratedValue;
+import javax.persistence.FetchType;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
+import javax.persistence.ManyToMany;
+import javax.persistence.JoinTable;
 import java.util.List;
 
 @Entity

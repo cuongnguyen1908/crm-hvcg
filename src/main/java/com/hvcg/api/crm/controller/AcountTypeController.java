@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.xml.ws.Response;
 
 @RestController
 @RequestMapping("/api")
@@ -23,7 +22,6 @@ public class AcountTypeController {
 
     @PostMapping("/accountType")
     public ResponseEntity<ResponseDTO> createAccountType(@RequestBody AccountTypeCreateDTO dto) {
-        System.out.println(dto.getName());
         AccountType accountTypeEntity = new AccountType();
         accountTypeEntity.setName(dto.getName());
                 this.accountTypeRepository.save(accountTypeEntity);

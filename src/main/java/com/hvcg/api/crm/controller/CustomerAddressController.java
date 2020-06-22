@@ -1,5 +1,6 @@
 package com.hvcg.api.crm.controller;
 
+import com.hvcg.api.crm.constant.Status;
 import com.hvcg.api.crm.dto.CustomerAddressDTO;
 import com.hvcg.api.crm.dto.ResponseDTO;
 import com.hvcg.api.crm.entity.CustomerAddress;
@@ -31,7 +32,7 @@ public class CustomerAddressController {
     @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
     @GetMapping("/addresses/{customerId}")
     public Page<CustomerAddressDTO> getAllCustomerAddressByCustomerId(@PathVariable String customerId, Pageable pageable) {
-        return this.customerAddressService.findAllCustomerAddressByCustomerId(pageable, new Long(customerId), false);
+        return this.customerAddressService.findAllCustomerAddressByCustomerId(pageable, new Long(customerId), Status.ACTIVE.getStatus());
     }
 
     @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })

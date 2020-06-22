@@ -9,4 +9,6 @@ public interface RegionRepository extends JpaRepository<Region, Long> {
 
     Optional<Region> findByIdAndDeleteFlag(Long id, boolean status);
 
+    boolean existsRegionByName(String name);
+
 }

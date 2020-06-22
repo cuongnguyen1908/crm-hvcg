@@ -1,10 +1,13 @@
 package com.hvcg.api.crm.entity;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 
 @Entity(name = "avatar")
 @Table(name = "avatar")
@@ -20,7 +23,12 @@ public class Avatar extends BaseEntity{
     @Column(name="thumb_url")
     private String thumbUrl;
 
-    @OneToOne(mappedBy = "avatar", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "avatar",
+            cascade = {CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.PERSIST,
+                    CascadeType.REFRESH},
+            fetch = FetchType.LAZY)
     private Customer customer;
 
     public Avatar() {

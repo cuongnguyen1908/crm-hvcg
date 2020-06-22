@@ -1,6 +1,7 @@
 package com.hvcg.api.crm.controller;
 
 
+import com.hvcg.api.crm.constant.Status;
 import com.hvcg.api.crm.dto.EmployeeDTO;
 import com.hvcg.api.crm.dto.ResponseDTO;
 import com.hvcg.api.crm.dto.createDTO.EmployeeCreateDTO;
@@ -49,7 +50,7 @@ public class EmployeeController {
     @ApiOperation(value = "", authorizations = {@Authorization(value = "apiKey")})
     @GetMapping("/employees")
     public Page<EmployeeDTO> getAllCustomer(Pageable pageable) {
-        return this.employeeRepository.findAllEmployee(pageable, false);
+        return this.employeeRepository.findAllEmployee(pageable, Status.ACTIVE.getStatus());
     }
 
 
@@ -63,14 +64,14 @@ public class EmployeeController {
         ;
 
         //check region exist
-        Optional<Region> optionalRegion = this.regionRepository.findByIdAndDeleteFlag(dto.getRegionId(), false);
+        Optional<Region> optionalRegion = this.regionRepository.findByIdAndDeleteFlag(dto.getRegionId(), Status.ACTIVE.getStatus());
         if (!optionalRegion.isPresent()) {
             throw new NotFoundException("Region not found");
         }
 
         //check account type exist
         Optional<AccountType> optionalAccountType =
-                this.accountTypeRepository.findAccountTypeByIdAndDeleteFlag(dto.getTypeAccountId(), false);
+                this.accountTypeRepository.findAccountTypeByIdAndDeleteFlag(dto.getTypeAccountId(), Status.ACTIVE.getStatus());
         if (!optionalAccountType.isPresent()) {
             throw new NotFoundException("Region not found");
         }
@@ -82,7 +83,7 @@ public class EmployeeController {
 
     @GetMapping("employees/{employeeId}")
     public EmployeeDTO getEmployeeById(@PathVariable Long employeeId) {
-        Optional<EmployeeDTO> optionalEmployeeDTO = this.employeeRepository.findEmployeeById(employeeId, false);
+        Optional<EmployeeDTO> optionalEmployeeDTO = this.employeeRepository.findEmployeeById(employeeId, Status.ACTIVE.getStatus());
         if (optionalEmployeeDTO.isPresent()) {
             return optionalEmployeeDTO.get();
         } else {
@@ -109,7 +110,7 @@ public class EmployeeController {
     @PutMapping("employees/{employeeId}")
     public ResponseEntity<ResponseDTO> updateEmployee(@PathVariable Long employeeId,
                                                       @RequestBody EmployeeUpdateDTO dto) {
-        Optional<Region> optionalRegion = this.regionRepository.findByIdAndDeleteFlag(dto.getRegionId(), false);
+        Optional<Region> optionalRegion = this.regionRepository.findByIdAndDeleteFlag(dto.getRegionId(), Status.ACTIVE.getStatus());
         if (!optionalRegion.isPresent()) {
             throw new NotFoundException("Can't find region id - " + dto.getRegionId());
         }

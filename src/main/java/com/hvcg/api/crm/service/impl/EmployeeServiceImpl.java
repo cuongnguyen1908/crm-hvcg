@@ -1,9 +1,10 @@
 package com.hvcg.api.crm.service.impl;
 
-import com.hvcg.api.crm.dto.CustomerDTO;
-import com.hvcg.api.crm.dto.EmployeeDTO;
 import com.hvcg.api.crm.dto.createDTO.EmployeeCreateDTO;
-import com.hvcg.api.crm.entity.*;
+import com.hvcg.api.crm.entity.AccountType;
+import com.hvcg.api.crm.entity.Employee;
+import com.hvcg.api.crm.entity.EmployeeAccount;
+import com.hvcg.api.crm.entity.Region;
 import com.hvcg.api.crm.repository.EmployeeRepository;
 import com.hvcg.api.crm.service.EmployeeService;
 import org.modelmapper.ModelMapper;

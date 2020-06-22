@@ -1,8 +1,5 @@
 package com.hvcg.api.crm.dto;
 
-import com.hvcg.api.crm.entity.Avatar;
-
-import javax.persistence.*;
 import java.util.Date;
 
 public class CustomerDTO {

@@ -21,7 +21,6 @@ public class RestExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(Exception exc) {
-        //create customer error response
         ErrorResponse error =
                 new ErrorResponse(HttpStatus.BAD_REQUEST.value(), exc.getMessage(), ZonedDateTime.now(ZoneId.of("Z")));
 

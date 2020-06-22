@@ -1,5 +1,6 @@
 package com.hvcg.api.crm.controller;
 
+import com.hvcg.api.crm.constant.Status;
 import com.hvcg.api.crm.dto.ResponseDTO;
 import com.hvcg.api.crm.entity.Avatar;
 import com.hvcg.api.crm.entity.Customer;
@@ -49,7 +50,7 @@ public class AvatarController {
 //
 //
 //        Avatar avatar = this.avatarService.storeFile(file);
-//        this.customerService.findCustomerById(customerId, false).orElseThrow(() -> new NotFoundException("Customer " +
+//        this.customerService.findCustomerById(customerId, Status.ACTIVE.getStatus()).orElseThrow(() -> new NotFoundException("Customer " +
 //                "not found id - " + customerId));
 //        this.customerService.updateAvatar(avatar, customerId);
 //
@@ -70,7 +71,7 @@ public class AvatarController {
     @PostMapping("avatars/change/{customerId}")
     public ResponseEntity<ResponseDTO> changeImage(@PathVariable Long customerId, @RequestParam("photo") MultipartFile photo) {
         //find customer by id
-        Optional<Customer> optionalCustomer = this.customerService.findCustomerById(customerId, false);
+        Optional<Customer> optionalCustomer = this.customerService.findCustomerById(customerId, Status.ACTIVE.getStatus());
         if (optionalCustomer.isPresent()) { //has exist customer id
             try {
                 Optional<Avatar> optionalAvatar = this.customerRepository.findAvatarById(customerId);

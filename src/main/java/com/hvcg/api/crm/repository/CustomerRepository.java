@@ -2,7 +2,6 @@ package com.hvcg.api.crm.repository;
 
 import com.hvcg.api.crm.entity.Avatar;
 import com.hvcg.api.crm.entity.Customer;
-import jdk.nashorn.internal.runtime.options.Option;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

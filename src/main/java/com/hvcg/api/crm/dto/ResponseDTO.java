@@ -3,6 +3,9 @@ package com.hvcg.api.crm.dto;
 public class ResponseDTO {
     private String message;
 
+    public ResponseDTO() {
+    }
+
     public ResponseDTO(String message) {
         this.message = message;
     }

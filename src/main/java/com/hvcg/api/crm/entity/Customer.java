@@ -1,9 +1,22 @@
 package com.hvcg.api.crm.entity;
 
 
-import com.fasterxml.jackson.annotation.*;
 
-import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.CascadeType;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+
 import java.util.Date;
 import java.util.List;
 

@@ -3,12 +3,9 @@ package com.hvcg.api.crm.service.impl;
 import com.hvcg.api.crm.dto.CustomerDTO;
 import com.hvcg.api.crm.entity.Avatar;
 import com.hvcg.api.crm.entity.Customer;
-
-import com.hvcg.api.crm.exception.NotFoundException;
 import com.hvcg.api.crm.repository.CustomerRepository;
 import com.hvcg.api.crm.service.CustomerAddressService;
 import com.hvcg.api.crm.service.CustomerService;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

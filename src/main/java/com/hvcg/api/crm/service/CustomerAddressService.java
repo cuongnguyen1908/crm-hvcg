@@ -1,7 +1,6 @@
 package com.hvcg.api.crm.service;
 
 import com.hvcg.api.crm.dto.CustomerAddressDTO;
-import com.hvcg.api.crm.entity.CustomerAddress;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

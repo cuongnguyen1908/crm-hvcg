@@ -1,5 +1,6 @@
 package com.hvcg.api.crm.controller;
 
+import com.hvcg.api.crm.constant.Status;
 import com.hvcg.api.crm.dto.CustomerDTO;
 import com.hvcg.api.crm.dto.ResponseDTO;
 import com.hvcg.api.crm.entity.Customer;
@@ -30,13 +31,13 @@ public class CustomerController {
     @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
     @GetMapping("/customers")
     public Page<Customer> getAllCustomer(Pageable pageable) {
-        return this.customerService.findAllPaging(pageable, false);
+        return this.customerService.findAllPaging(pageable, Status.ACTIVE.getStatus());
     }
 
     @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
     @GetMapping("/customers/{customerId}")
     public Customer getCustomerById(@PathVariable String customerId) {
-        Optional<Customer> theCustomer = this.customerService.findCustomerById(new Long(customerId), false);
+        Optional<Customer> theCustomer = this.customerService.findCustomerById(new Long(customerId), Status.ACTIVE.getStatus());
         if (theCustomer.isPresent()) {
             return theCustomer.get();
         }else {
