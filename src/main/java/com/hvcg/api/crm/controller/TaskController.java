@@ -62,15 +62,20 @@ public class TaskController {
         task.setTaskStatus(taskStatus);
         task.setTaskPrioriry(taskPrioriry);
         task.setCustomer(customer);
+
         List<Long> listEmployeeId = dto.getEmployeeId();
 
 
         if (listEmployeeId != null) {
 
             listEmployeeId.forEach(id -> {
+
                 Employee employee = this.employeeRepository.findEmployeeByIdAndDeleteFlag(id, Status.ACTIVE.getStatus())
                         .orElseThrow(() -> new RuntimeException("Employee not found id - " + id));
-                task.addEmployee(employee);
+                TaskAssignment taskAssignment = new TaskAssignment();
+                taskAssignment.setEmployee(employee);
+                taskAssignment.setTask(task);
+                task.addTaskAssignment(taskAssignment);
             });
         }
 

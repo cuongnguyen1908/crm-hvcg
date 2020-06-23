@@ -6,31 +6,29 @@ import java.util.List;
 
 @Entity(name = "task_assignment")
 @Table(name = "task_assignment")
-public class TaskAssignment{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
-    private Long id;
+public class TaskAssignment extends BaseEntity{
 
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "task_id")
+    private Task task;
 
-    @Column(name= "delete_flg", columnDefinition = "bit default 0", nullable = false)
-    private boolean deleteFlag;
-
-    public Long getId() {
-        return id;
+    public Employee getEmployee() {
+        return employee;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
-    public boolean isDeleteFlag() {
-        return deleteFlag;
+    public Task getTask() {
+        return task;
     }
 
-    public void setDeleteFlag(boolean deleteFlag) {
-        this.deleteFlag = deleteFlag;
+    public void setTask(Task task) {
+        this.task = task;
     }
-
 }

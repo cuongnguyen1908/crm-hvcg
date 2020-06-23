@@ -22,16 +22,8 @@ public class Task extends BaseEntity{
     @Column(name = "description")
     private String description;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.DETACH,
-                    CascadeType.REFRESH})
-    @JoinTable(name="task_assignment",
-    joinColumns = @JoinColumn(name = "task_id"),
-    inverseJoinColumns = @JoinColumn(name = "employee_id"))
-    private List<Employee> employees;
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    private List<TaskAssignment> taskAssignments;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -41,7 +33,7 @@ public class Task extends BaseEntity{
     @JoinColumn(name = "status_id")
     private TaskStatus taskStatus;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "priority_id")
     private TaskPrioriry taskPrioriry;
 
@@ -94,13 +86,22 @@ public class Task extends BaseEntity{
         this.customer = customer;
     }
 
+    public List<TaskAssignment> getTaskAssignments() {
+        return taskAssignments;
+    }
 
-    public void addEmployee(Employee employee) {
-        if (employees == null) {
-            employees = new ArrayList<>();
+    public void setTaskAssignments(List<TaskAssignment> taskAssignments) {
+        this.taskAssignments = taskAssignments;
+    }
+
+
+
+    public void addTaskAssignment(TaskAssignment taskAssignment) {
+        if (taskAssignments == null) {
+            taskAssignments = new ArrayList<>();
 
         }
-        employees.add(employee);
+        taskAssignments.add(taskAssignment);
     }
 
 }
