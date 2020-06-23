@@ -33,6 +33,9 @@ public class Customer extends BaseEntity{
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "full_name")
+    private String fullName;
+
     @Column(name="email")
     private String email;
 
@@ -53,6 +56,11 @@ public class Customer extends BaseEntity{
     @OneToMany(mappedBy = "customer")
     private List<CustomerAddress> address;
 
+    @OneToMany(mappedBy = "customer")
+    private List<Task> tasks;
+
+
+
     public Customer() {
     }
 
@@ -62,6 +70,14 @@ public class Customer extends BaseEntity{
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getLastName() {
@@ -121,4 +137,11 @@ public class Customer extends BaseEntity{
         this.address = address;
     }
 
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
 }

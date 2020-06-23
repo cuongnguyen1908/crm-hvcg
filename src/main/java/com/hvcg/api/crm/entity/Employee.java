@@ -4,23 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.CascadeType;
-import javax.persistence.OneToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.FetchType;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity(name = "employee")
 @Table(name = "employee")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Employee extends BaseEntity {
-    //id
-    //person code
     @Column(name = "first_name")
     private String firstName;
 
@@ -42,9 +34,6 @@ public class Employee extends BaseEntity {
     @Column(name = "identity_number")
     private String identityNumber;
 
-    // type: Nhan vien ban bang lay
-    // tu bang khac(account)
-
     @Column(name = "position")
     private String position;
 
@@ -61,7 +50,6 @@ public class Employee extends BaseEntity {
     @JoinColumn(name="employee_account_id")
     private EmployeeAccount employeeAccount;
 
-
     @ManyToOne(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,
@@ -69,6 +57,23 @@ public class Employee extends BaseEntity {
             CascadeType.REFRESH})
     @JoinColumn(name="region_id")
     private Region region;
+
+//    @OneToMany(mappedBy = "employee")
+//    private List<TaskAssignment> taskAssignments;
+
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.DETACH,
+                    CascadeType.REFRESH})
+    @JoinTable(name = "task_assignment",
+    joinColumns = @JoinColumn(name = "employee_id"),
+    inverseJoinColumns = @JoinColumn(name = "task_id" ))
+    private List<Task> tasks;
+
+    // getter/setter
+
 
     public String getFirstName() {
         return firstName;
@@ -173,4 +178,12 @@ public class Employee extends BaseEntity {
     public void setRegion(Region region) {
         this.region = region;
     }
+
+//    public List<TaskAssignment> getTaskAssignments() {
+//        return taskAssignments;
+//    }
+//
+//    public void setTaskAssignments(List<TaskAssignment> taskAssignments) {
+//        this.taskAssignments = taskAssignments;
+//    }
 }

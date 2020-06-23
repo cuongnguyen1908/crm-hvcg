@@ -19,13 +19,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     @Override
-    public void saveCustomer(EmployeeCreateDTO dto, Region region, AccountType accountType) {
+    public void saveEmployee(EmployeeCreateDTO dto, Region region, AccountType accountType) {
         ModelMapper modelMapper = new ModelMapper();
         Employee employeeEntity = modelMapper.map(dto, Employee.class);
+        employeeEntity.setId(null);
         EmployeeAccount employeeAccount = new EmployeeAccount(dto.getUsername(), dto.getPassword(), accountType);
-        employeeEntity.setFullName(dto.getFirstName() + dto.getLastName());
+        employeeEntity.setFullName(dto.getFirstName() + " " + dto.getLastName());
         employeeEntity.setRegion(region);
         employeeEntity.setEmployeeAccount(employeeAccount);
+        System.out.println("id emp: " + employeeEntity.getId());
         this.employeeRepository.save(employeeEntity);
     }
 }

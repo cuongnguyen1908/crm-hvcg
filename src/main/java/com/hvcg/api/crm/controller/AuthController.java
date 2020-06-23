@@ -101,7 +101,6 @@ public class AuthController {
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
         } else {
-
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin":
@@ -126,7 +125,6 @@ public class AuthController {
         }
 
         user.setRoles(roles);
-        System.out.println("final" + user.getUsername() + " " + user.getPassword() + " " +  user.getRoles());
         userRepository.save(user);
 
         ResponseDTO responseDTO = new ResponseDTO("Register success!");

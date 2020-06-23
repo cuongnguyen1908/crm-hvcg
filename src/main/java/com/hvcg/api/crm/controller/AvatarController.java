@@ -75,7 +75,6 @@ public class AvatarController {
         if (optionalCustomer.isPresent()) { //has exist customer id
             try {
                 Optional<Avatar> optionalAvatar = this.customerRepository.findAvatarById(customerId);
-                System.out.println("find avatar inside customer: " + optionalAvatar.get());
 
                 if (optionalAvatar.isPresent()) {// founded ava inside customer
                     Avatar avatarFound = optionalAvatar.get();

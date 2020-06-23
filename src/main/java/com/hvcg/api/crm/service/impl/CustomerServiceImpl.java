@@ -38,19 +38,13 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer createCustomer(CustomerDTO dto) {
         ModelMapper modelMapper = new ModelMapper();
         Customer customerEntity =modelMapper.map(dto, Customer.class);
+        customerEntity.setFullName(dto.getLastName() + " " + dto.getFirstName());
         return this.customerRepository.save(customerEntity);
     }
 
     @Override
     public Optional<Customer> findCustomerById(Long id, boolean status) {
         return this.customerRepository.findCustomerById(id, status);
-//        if (customerOptional.isPresent()) {
-//            return customerOptional;
-//        }else{
-//            throw new NotFoundException("Customer not found id - " + id);
-//        }
-////        return null;
-
     }
 
     @Override

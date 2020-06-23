@@ -24,7 +24,7 @@ public abstract class BaseEntity {
 	@Column(name="id")
 	private Long id;
 
-	@Column(name= "delete_flg", columnDefinition = "bit default 1", nullable = false)
+	@Column(name= "delete_flg", columnDefinition = "bit default 0", nullable = false)
 	private boolean deleteFlag;
 	
 	@Column

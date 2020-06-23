@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface EmployeeAccountRepository extends JpaRepository<EmployeeAccount, Long> {
 
-    @Query(value = "FROM employee_account e where e.deleteFlag = :status")
+    @Query(value = "FROM employee_account e WHERE e.deleteFlag = :status")
     Optional<EmployeeAccount> findByIdExist(@Param("status") boolean status);
 
     Boolean existsByUsername(String username);

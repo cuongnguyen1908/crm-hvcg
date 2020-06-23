@@ -5,5 +5,6 @@ import com.hvcg.api.crm.entity.AccountType;
 import com.hvcg.api.crm.entity.Region;
 
 public interface EmployeeService {
-    void saveCustomer(EmployeeCreateDTO dto, Region region, AccountType accountType);
+
+    void saveEmployee(EmployeeCreateDTO dto, Region region, AccountType accountType);
 }

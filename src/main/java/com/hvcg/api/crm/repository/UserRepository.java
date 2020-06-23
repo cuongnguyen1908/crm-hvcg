@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query(value = "FROM user u WHERE u.username = :username and u.deleteFlag = :status")
+    @Query(value = "FROM user u WHERE u.username = :username AND u.deleteFlag = :status")
     Optional<User> findByUsername(@Param("username") String username, @Param("status") boolean status);
 
 

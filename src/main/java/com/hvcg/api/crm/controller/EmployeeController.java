@@ -75,7 +75,7 @@ public class EmployeeController {
         if (!optionalAccountType.isPresent()) {
             throw new NotFoundException("Region not found");
         }
-        this.employeeService.saveCustomer(dto, optionalRegion.get(), optionalAccountType.get());
+        this.employeeService.saveEmployee(dto, optionalRegion.get(), optionalAccountType.get());
 
         ResponseDTO responseDTO = new ResponseDTO("Create success");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);

@@ -16,13 +16,13 @@ import java.util.Optional;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long>, PagingAndSortingRepository<Customer, Long> {
-    @Query("from customer c where c.deleteFlag =?1")
+    @Query("FROM customer c WHERE c.deleteFlag =?1")
     Page<Customer> findAll(Pageable pageable, boolean deleteFlag);
 
-    @Query("from customer c where c.id = :customerId and c.deleteFlag = :status")
+    @Query("FROM customer c WHERE c.id = :customerId and c.deleteFlag = :status")
     Optional<Customer> findCustomerById(@Param("customerId") Long id, @Param("status") boolean deleteFlag);
 
-    @Query("from customer c where lower(c.firstName) like concat('%', lower(:searchValue), '%') and c.deleteFlag =:status")
+    @Query("FROM customer c WHERE lower(c.fullName) like concat('%', lower(:searchValue), '%') and c.deleteFlag =:status")
     Page<Customer> searchAllCustomer(Pageable pageable, @Param("searchValue") String searchValue, @Param("status") boolean status);
 
     @Modifying

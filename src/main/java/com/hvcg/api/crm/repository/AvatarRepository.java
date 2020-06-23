@@ -10,6 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface AvatarRepository extends JpaRepository<Avatar, Long> {
     @Modifying
     @Transactional
-    @Query("DELETE from avatar where id = :imageId")
+    @Query("DELETE FROM avatar WHERE id = :imageId")
     void deleteImage(@Param("imageId") Long id);
 }
