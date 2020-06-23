@@ -20,6 +20,14 @@ spring.datasource.password = {Your password of MySql here}
 
 5. In the root folder open scrip file `initSQL.sql` in MySQL, to generate some init data.
 
+6. Open browser with url: http://localhost:8080/swagger-ui.html
+
+7. Create your account nested in `auth-controller` and login nested in this controller to receive the token
+
+8. In the top left click button `Authorize` and input the token with format: `Bearer {Your token}`
+
+9. Enjoy my app :)
+
 - NOTE: After the first time run the project, the table had been generate, go to file `application.properties` and change the `spring.jpa.hibernate.ddl-auto = create` to `spring.jpa.hibernate.ddl-auto = none`.
 
 - For more information contact me: cuongnguyen190899@gmail.com
