@@ -6,6 +6,7 @@ import com.hvcg.api.crm.dto.createDTO.TaskAssignmentCreateDTO;
 import com.hvcg.api.crm.entity.Customer;
 import com.hvcg.api.crm.entity.Employee;
 import com.hvcg.api.crm.entity.Task;
+import com.hvcg.api.crm.entity.TaskAssignment;
 import com.hvcg.api.crm.repository.EmployeeRepository;
 import com.hvcg.api.crm.repository.TaskAssignmentRepository;
 import com.hvcg.api.crm.repository.TaskRepository;
@@ -15,12 +16,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class TaskAssignmentController {
 
-//    @Autowired
-//    private TaskAssignmentRepository taskAssignmentRepository;
+    @Autowired
+    private TaskAssignmentRepository taskAssignmentRepository;
 //
 //    @Autowired
 //    private TaskRepository taskRepository;
@@ -43,4 +46,11 @@ public class TaskAssignmentController {
 //        ResponseDTO responseDTO = new ResponseDTO("Create success");
 //        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 //    }
+
+    @GetMapping("/taskAssignment")
+    public List<TaskAssignment> getAll() {
+        return this.taskAssignmentRepository.findAll();
+    }
+
+
 }

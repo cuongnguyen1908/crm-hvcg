@@ -58,19 +58,8 @@ public class Employee extends BaseEntity {
     @JoinColumn(name="region_id")
     private Region region;
 
-//    @OneToMany(mappedBy = "employee")
-//    private List<TaskAssignment> taskAssignments;
-
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.DETACH,
-                    CascadeType.REFRESH})
-    @JoinTable(name = "task_assignment",
-    joinColumns = @JoinColumn(name = "employee_id"),
-    inverseJoinColumns = @JoinColumn(name = "task_id" ))
-    private List<Task> tasks;
+    @OneToMany(mappedBy = "employee")
+    private List<TaskAssignment> taskAssignments;
 
     // getter/setter
 
@@ -179,11 +168,11 @@ public class Employee extends BaseEntity {
         this.region = region;
     }
 
-//    public List<TaskAssignment> getTaskAssignments() {
-//        return taskAssignments;
-//    }
-//
-//    public void setTaskAssignments(List<TaskAssignment> taskAssignments) {
-//        this.taskAssignments = taskAssignments;
-//    }
+    public List<TaskAssignment> getTaskAssignments() {
+        return taskAssignments;
+    }
+
+    public void setTaskAssignments(List<TaskAssignment> taskAssignments) {
+        this.taskAssignments = taskAssignments;
+    }
 }
