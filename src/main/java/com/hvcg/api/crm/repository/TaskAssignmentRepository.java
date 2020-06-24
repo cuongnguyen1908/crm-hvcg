@@ -10,10 +10,4 @@ import org.springframework.data.repository.query.Param;
 
 public interface TaskAssignmentRepository extends JpaRepository<TaskAssignment, Long> {
 
-
-   // @Query(value = "INSERT INTO task_assignment(employee_id, task_id) VALUES(:employeeId, :taskId)", nativeQuery = true)
-   // void createAssignment(@Param("employeeId") Long customerId, @Param("taskId") Long taskId);
-
-    @Query(value = "INSERT INTO task_assignment(employee_id, task_id) VALUES(:employeeId, :taskId)", nativeQuery = true)
-    void createAssignment(@Param("employeeId") Employee employee, @Param("taskId") Task task);
 }
