@@ -81,8 +81,6 @@ public class AuthController {
             throw new NotFoundException("User has exist");
         }
 
-        System.out.println(dto.getUsername() + " " + dto.getPassword() + " " + dto.getRole());
-
         // Create new user's account
         User user = new User(dto.getUsername(),
                 encoder.encode(dto.getPassword()));

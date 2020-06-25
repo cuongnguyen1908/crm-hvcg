@@ -185,7 +185,7 @@ public class TaskController {
             throw new NotFoundException("Not found task id - " + taskId);
         }
 
-        ResponseDTO responseDTO = new ResponseDTO("Create success");
+        ResponseDTO responseDTO = new ResponseDTO("Update success");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }
