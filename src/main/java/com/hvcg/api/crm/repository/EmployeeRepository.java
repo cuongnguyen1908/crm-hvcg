@@ -15,14 +15,26 @@ import java.util.Date;
 import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-    @Query(value = "SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.email, e.phone, e.address, e.identityNumber, " +
-            "e.position, e.bankName, e.bankAccount, e.dob, e.employeeAccount.username, e.employeeAccount.accountType.name, e.region.name, e.region.aliasName) " +
+    @Query(value = "SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.email, e" +
+            ".phone, e.address, e.identityNumber, " +
+            "e.position, e.bankName, e.bankAccount, e.dob, e.employeeAccount.username, e.employeeAccount.accountType" +
+            ".name, e.region.name, e.region.aliasName) " +
             "FROM employee e WHERE e.deleteFlag = :status")
     Page<EmployeeDTO> findAllEmployee(Pageable pageable, @Param("status") boolean status);
 
+    @Query("SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.email, e.phone, " +
+            "e.address, e.identityNumber, " +
+            "e.position, e.bankName, e.bankAccount, e.dob, e.employeeAccount.username, e.employeeAccount.accountType" +
+            ".name, e.region.name, e.region.aliasName) " +
+            "FROM employee e WHERE lower(e.fullName) like concat('%', lower(:searchValue), '%') and e.deleteFlag " +
+            "=:status")
+    Page<EmployeeDTO> searchAllEmployee(Pageable pageable, @Param("searchValue") String searchValue,
+                                        @Param("status") boolean status);
 
-    @Query(value = "SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.email, e.phone, e.address, e.identityNumber, " +
-            "e.position, e.bankName, e.bankAccount, e.dob, e.employeeAccount.username, e.employeeAccount.accountType.name, e.region.name, e.region.aliasName) " +
+    @Query(value = "SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.email, e" +
+            ".phone, e.address, e.identityNumber, " +
+            "e.position, e.bankName, e.bankAccount, e.dob, e.employeeAccount.username, e.employeeAccount.accountType" +
+            ".name, e.region.name, e.region.aliasName) " +
             "FROM employee e WHERE e.deleteFlag = :status AND e.id = :employeeId")
     Optional<EmployeeDTO> findEmployeeById(@Param("employeeId") Long employeeId, @Param("status") boolean status);
 
@@ -33,7 +45,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Modifying
     @Transactional
     @Query(value = "UPDATE employee e SET e.deleteFlag = :status  WHERE e.id = :employeeId")
-    void deleteCustomerByID(@Param("employeeId") Long id, @Param("status") boolean status );
+    void deleteCustomerByID(@Param("employeeId") Long id, @Param("status") boolean status);
 
     @Query(value = "SELECT e.employeeAccount.id FROM employee e WHERE e.id = :employeeId")
     Long findAccountIdByEmployeeId(@Param("employeeId") Long employeeId);

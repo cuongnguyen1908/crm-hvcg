@@ -3,22 +3,25 @@ package com.hvcg.api.crm.controller;
 import com.hvcg.api.crm.constant.Status;
 import com.hvcg.api.crm.dto.CustomerDTO;
 import com.hvcg.api.crm.dto.ResponseDTO;
+import com.hvcg.api.crm.dto.createDTO.CustomerCreateDTO;
 import com.hvcg.api.crm.entity.Customer;
 import com.hvcg.api.crm.exception.NotFoundException;
-
+import com.hvcg.api.crm.repository.CustomerRepository;
 import com.hvcg.api.crm.service.CustomerService;
-
-
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api")
@@ -26,65 +29,58 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private CustomerRepository customerRepository;
 
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
     @GetMapping("/customers")
-    public Page<Customer> getAllCustomer(Pageable pageable) {
-        return this.customerService.findAllPaging(pageable, Status.ACTIVE.getStatus());
+    public Page<CustomerDTO> getAllCustomer(Pageable pageable) {
+        return this.customerRepository.getAllCustomer(pageable, Status.ACTIVE.getStatus());
     }
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
     @GetMapping("/customers/{customerId}")
-    public Customer getCustomerById(@PathVariable String customerId) {
-        Optional<Customer> theCustomer = this.customerService.findCustomerById(new Long(customerId), Status.ACTIVE.getStatus());
-        if (theCustomer.isPresent()) {
-            return theCustomer.get();
-        }else {
-            throw new NotFoundException("Customer id not found - " + customerId);
+    public CustomerDTO getCustomerById(@PathVariable Long customerId) {
+        CustomerDTO customerDTO = this.customerRepository.findCustomerById(customerId, Status.ACTIVE.getStatus())
+                .orElseThrow(() -> new NotFoundException("Customer not found id - " + customerId));
 
-        }
-
+        return customerDTO;
     }
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
     @PostMapping("/customers")
-    public ResponseEntity<ResponseDTO> createCustomer(@RequestBody CustomerDTO dto) {
+    public ResponseEntity<ResponseDTO> createCustomer(@RequestBody CustomerCreateDTO dto) {
         this.customerService.createCustomer(dto);
+
         ResponseDTO responseDTO = new ResponseDTO("Create success");
-
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK) ;
-    }
-
-    @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
-    @DeleteMapping("/customers/{customerId}")
-    public ResponseEntity<ResponseDTO> deleteCustomer(@PathVariable String customerId) {
-         this.customerService.deleteCustomer(new Long(customerId));
-        ResponseDTO responseDTO = new ResponseDTO("Delete success");
-
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK) ;
-
-    }
-
-    @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
-    @PutMapping("/customers")
-    public ResponseEntity<ResponseDTO> updateCustomer(@RequestBody Customer customer) {
-        this.customerService.updateCustomer(customer);
-        ResponseDTO responseDTO = new ResponseDTO("Update success");
-
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="apiKey") })
-    @GetMapping("/customers/find")
-    public Page<Customer> searchCustomers(Pageable pageable , @RequestParam("s") String s){
-        return this.customerService.searchAllCustomer(pageable, s);
+    @DeleteMapping("/customers/{customerId}")
+    public ResponseEntity<ResponseDTO> deleteCustomer(@PathVariable Long customerId) {
+        this.customerService.deleteCustomer(customerId);
+        ResponseDTO responseDTO = new ResponseDTO("Delete success");
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+
+    }
+
+    @PutMapping("/customers/{customerId}")
+    public ResponseEntity<ResponseDTO> updateCustomer(@PathVariable Long customerId,
+                                                      @RequestBody CustomerDTO dto) {
+        if (this.customerRepository.existsCustomerByIdAndDeleteFlag(customerId, Status.ACTIVE.getStatus())) {
+            this.customerService.updateCustomer(customerId, dto);
+        } else {
+            throw new NotFoundException("Not found customer id - " + customerId);
+        }
+
+        ResponseDTO responseDTO = new ResponseDTO("Update success");
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 
-
-
-
+    @GetMapping("/customers/find")
+    public Page<Customer> searchCustomers(Pageable pageable, @RequestParam("s") String s) {
+        return this.customerService.searchAllCustomer(pageable, s);
+    }
 
 
 }

@@ -1,9 +1,17 @@
 package com.hvcg.api.crm.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.CascadeType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +19,7 @@ import java.util.List;
 @Entity(name = "task")
 @Table(name = "task")
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Task extends BaseEntity{
 
     @Column(name = "name")

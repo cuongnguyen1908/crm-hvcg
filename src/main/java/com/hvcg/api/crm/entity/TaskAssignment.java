@@ -1,11 +1,18 @@
 package com.hvcg.api.crm.entity;
 
 
-import javax.persistence.*;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.CascadeType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity(name = "task_assignment")
 @Table(name = "task_assignment")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class TaskAssignment extends BaseEntity{
 
     @ManyToOne(cascade = CascadeType.REFRESH)

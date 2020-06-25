@@ -2,6 +2,7 @@ package com.hvcg.api.crm.controller;
 
 
 import com.hvcg.api.crm.constant.Status;
+import com.hvcg.api.crm.dto.EmployeeDTO;
 import com.hvcg.api.crm.dto.ResponseDTO;
 import com.hvcg.api.crm.dto.createDTO.TaskAssignmentCreateDTO;
 import com.hvcg.api.crm.entity.Employee;
@@ -14,13 +15,14 @@ import com.hvcg.api.crm.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
 
 
 @RestController
@@ -52,17 +54,27 @@ public class TaskAssignmentController {
 
                 Employee employee = this.employeeRepository.findEmployeeByIdAndDeleteFlag(id, Status.ACTIVE.getStatus())
                         .orElseThrow(() -> new RuntimeException("Employee not found id - " + id));
-                TaskAssignment taskAssignment = new TaskAssignment();
-                taskAssignment.setTask(task);
-                taskAssignment.setEmployee(employee);
-                this.taskAssignmentRepository.save(taskAssignment);
+                if (!this.taskAssignmentRepository.existsTaskAssignmentByTaskIdAndEmployeeId(task.getId(),
+                        employee.getId())) {
+                    TaskAssignment taskAssignment = new TaskAssignment();
+                    taskAssignment.setTask(task);
+                    taskAssignment.setEmployee(employee);
+                    this.taskAssignmentRepository.save(taskAssignment);
+                }
+
             });
-        }else{
+        } else {
             throw new NotFoundException("Employee is empty");
         }
 
 
         ResponseDTO responseDTO = new ResponseDTO("Assign success");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/taskAssign/{taskId}")
+    public List<EmployeeDTO> findAllEmployeeAssignByTaskId(@PathVariable Long taskId) {
+        return this.taskAssignmentRepository.findAllEmployeeAssignmentByTaskId(taskId, Status.ACTIVE.getStatus());
     }
 }

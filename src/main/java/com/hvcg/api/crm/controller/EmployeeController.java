@@ -15,17 +15,21 @@ import com.hvcg.api.crm.repository.EmployeeAccountRepository;
 import com.hvcg.api.crm.repository.EmployeeRepository;
 import com.hvcg.api.crm.repository.RegionRepository;
 import com.hvcg.api.crm.service.EmployeeService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @RestController
@@ -47,7 +51,6 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "apiKey")})
     @GetMapping("/employees")
     public Page<EmployeeDTO> getAllCustomer(Pageable pageable) {
         return this.employeeRepository.findAllEmployee(pageable, Status.ACTIVE.getStatus());
@@ -64,14 +67,16 @@ public class EmployeeController {
         ;
 
         //check region exist
-        Optional<Region> optionalRegion = this.regionRepository.findByIdAndDeleteFlag(dto.getRegionId(), Status.ACTIVE.getStatus());
+        Optional<Region> optionalRegion = this.regionRepository.findByIdAndDeleteFlag(dto.getRegionId(),
+                Status.ACTIVE.getStatus());
         if (!optionalRegion.isPresent()) {
             throw new NotFoundException("Region not found");
         }
 
         //check account type exist
         Optional<AccountType> optionalAccountType =
-                this.accountTypeRepository.findAccountTypeByIdAndDeleteFlag(dto.getTypeAccountId(), Status.ACTIVE.getStatus());
+                this.accountTypeRepository.findAccountTypeByIdAndDeleteFlag(dto.getTypeAccountId(),
+                        Status.ACTIVE.getStatus());
         if (!optionalAccountType.isPresent()) {
             throw new NotFoundException("Region not found");
         }
@@ -83,7 +88,8 @@ public class EmployeeController {
 
     @GetMapping("employees/{employeeId}")
     public EmployeeDTO getEmployeeById(@PathVariable Long employeeId) {
-        Optional<EmployeeDTO> optionalEmployeeDTO = this.employeeRepository.findEmployeeById(employeeId, Status.ACTIVE.getStatus());
+        Optional<EmployeeDTO> optionalEmployeeDTO = this.employeeRepository.findEmployeeById(employeeId,
+                Status.ACTIVE.getStatus());
         if (optionalEmployeeDTO.isPresent()) {
             return optionalEmployeeDTO.get();
         } else {
@@ -92,15 +98,19 @@ public class EmployeeController {
 
     }
 
+    @GetMapping("/employees/find")
+    public Page<EmployeeDTO> searchCustomers(Pageable pageable, @RequestParam("s") String s) {
+        return this.employeeRepository.searchAllEmployee(pageable, s, Status.ACTIVE.getStatus());
+    }
+
     @DeleteMapping("employees/{employeeId}")
     public ResponseEntity<ResponseDTO> deleteEmployees(@PathVariable Long employeeId) {
         this.employeeRepository.findById(employeeId).orElseThrow(() -> new NotFoundException("Can't find employee id " +
                 "- " + employeeId));
 
         Long accountId = this.employeeRepository.findAccountIdByEmployeeId(employeeId);
-        System.out.println("id ac: " + accountId);
-        this.employeeAccountRepository.deleteAccountById(accountId, true);
-        this.employeeRepository.deleteCustomerByID(employeeId, true);
+        this.employeeAccountRepository.deleteAccountById(accountId, Status.IN_ACTIVE.getStatus());
+        this.employeeRepository.deleteCustomerByID(employeeId, Status.IN_ACTIVE.getStatus());
 
 
         ResponseDTO responseDTO = new ResponseDTO("Delete success");
@@ -110,7 +120,8 @@ public class EmployeeController {
     @PutMapping("employees/{employeeId}")
     public ResponseEntity<ResponseDTO> updateEmployee(@PathVariable Long employeeId,
                                                       @RequestBody EmployeeUpdateDTO dto) {
-        Optional<Region> optionalRegion = this.regionRepository.findByIdAndDeleteFlag(dto.getRegionId(), Status.ACTIVE.getStatus());
+        Optional<Region> optionalRegion = this.regionRepository.findByIdAndDeleteFlag(dto.getRegionId(),
+                Status.ACTIVE.getStatus());
         if (!optionalRegion.isPresent()) {
             throw new NotFoundException("Can't find region id - " + dto.getRegionId());
         }
@@ -118,13 +129,6 @@ public class EmployeeController {
 
         Optional<Employee> optionalEmployee = this.employeeRepository.findById(employeeId);
         if (optionalEmployee.isPresent()) {
-//                void updateEmployee(@Param("firstName") String firstName, @Param("lastName") String lastName,
-//                        @Param("fullName") String fullName,
-//                        @Param("dob") Date dob, @Param("email") String email, @Param("address") String address,
-//                        @Param("phone") String phone, @Param("identityNumber") String identityNumber,
-//                        @Param("position") String position, @Param("bankName") String bankName,
-//                        @Param("bankAccount") String bankAccount, @Param("regionId") Long regionId,
-//                        @Param("employeeId") Long id);
             this.employeeRepository.updateEmployee(
                     dto.getFirstName(),
                     dto.getLastName(),

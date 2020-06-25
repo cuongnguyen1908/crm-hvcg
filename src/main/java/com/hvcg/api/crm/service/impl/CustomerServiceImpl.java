@@ -1,6 +1,7 @@
 package com.hvcg.api.crm.service.impl;
 
 import com.hvcg.api.crm.dto.CustomerDTO;
+import com.hvcg.api.crm.dto.createDTO.CustomerCreateDTO;
 import com.hvcg.api.crm.entity.Avatar;
 import com.hvcg.api.crm.entity.Customer;
 import com.hvcg.api.crm.repository.CustomerRepository;
@@ -11,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 
 @Service
@@ -25,33 +24,28 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerAddressService customerAddressService;
 
 
-
-    @Override
-    public Page<Customer> findAllPaging(Pageable pageable, boolean status) {
-        return  this.customerRepository.findAll(pageable, status);
-
-    }
-
+//    @Override
+//    public Page<Customer> findAllPaging(Pageable pageable, boolean status) {
+//        return  this.customerRepository.findAll(pageable, status);
+//
+//    }
 
 
     @Override
-    public Customer createCustomer(CustomerDTO dto) {
+    public Customer createCustomer(CustomerCreateDTO dto) {
         ModelMapper modelMapper = new ModelMapper();
-        Customer customerEntity =modelMapper.map(dto, Customer.class);
+        Customer customerEntity = modelMapper.map(dto, Customer.class);
         customerEntity.setFullName(dto.getLastName() + " " + dto.getFirstName());
         return this.customerRepository.save(customerEntity);
     }
 
-    @Override
-    public Optional<Customer> findCustomerById(Long id, boolean status) {
-        return this.customerRepository.findCustomerById(id, status);
-    }
 
     @Override
     public void deleteCustomer(Long customerId) {
         //delete parent
         //find customer
-        Customer customer = this.customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found -" + customerId));
+        Customer customer = this.customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException(
+                "Customer not found -" + customerId));
         //set flag delete = true (1)
         customer.setDeleteFlag(true);
         this.customerRepository.save(customer);
@@ -61,16 +55,23 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer updateCustomer(Customer customer) {
-        return this.customerRepository.save(customer);
+    public void updateCustomer(Long customerId, CustomerDTO dto) {
+
+        ModelMapper modelMapper = new ModelMapper();
+
+        Customer customerEntity = modelMapper.map(dto, Customer.class);
+        customerEntity.setFullName(dto.getLastName() + " " + dto.getFirstName());
+        customerEntity.setId(customerId);
+
+        this.customerRepository.save(customerEntity);
     }
 
     @Override
-    public Page<Customer> searchAllCustomer(Pageable pageable , String searchValue) {
+    public Page<Customer> searchAllCustomer(Pageable pageable, String searchValue) {
         if (searchValue != null && searchValue.trim().length() > 0) {
             return this.customerRepository.searchAllCustomer(pageable, searchValue.toLowerCase(), false);
         }
-            return this.customerRepository.findAll(pageable, false);
+        return this.customerRepository.findAll(pageable, false);
     }
 
     @Override

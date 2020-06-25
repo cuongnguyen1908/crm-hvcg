@@ -24,11 +24,11 @@ public class AcountTypeController {
     public ResponseEntity<ResponseDTO> createAccountType(@RequestBody AccountTypeCreateDTO dto) {
         AccountType accountTypeEntity = new AccountType();
         accountTypeEntity.setName(dto.getName());
-                this.accountTypeRepository.save(accountTypeEntity);
+        this.accountTypeRepository.save(accountTypeEntity);
 
         ResponseDTO responseDTO = new ResponseDTO("Create success");
 
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK) ;
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 }

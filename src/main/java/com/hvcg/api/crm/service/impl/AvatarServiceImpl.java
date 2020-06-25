@@ -29,17 +29,15 @@ public class AvatarServiceImpl implements AvatarService {
     private AvatarRepository avatarRepository;
 
 
-
-
     @Override
     public void storeFile(MultipartFile file, Avatar avatar) {
-        if(!(file.getOriginalFilename().endsWith(AppConstants.PNG_FILE_FORMAT) || file.getOriginalFilename().endsWith(AppConstants.JPEG_FILE_FORMAT) || file.getOriginalFilename().endsWith(AppConstants.JPG_FILE_FORMAT))) {
+        if (!(file.getOriginalFilename().endsWith(AppConstants.PNG_FILE_FORMAT) || file.getOriginalFilename().endsWith(AppConstants.JPEG_FILE_FORMAT) || file.getOriginalFilename().endsWith(AppConstants.JPG_FILE_FORMAT))) {
             throw new NotFoundException("Invalid file format");
         }
 //        Avatar avatar = new Avatar();
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         try {
-            if (fileName.contains("..")){
+            if (fileName.contains("..")) {
                 throw new NotFoundException("Filename contains invalid path");
             }
 
@@ -55,7 +53,7 @@ public class AvatarServiceImpl implements AvatarService {
                     .toUriString();
             avatar.setUrl(url);
             this.avatarRepository.save(avatar);
-        }catch (IOException e) {
+        } catch (IOException e) {
             throw new NotFoundException("Could not store file");
 
         }
@@ -69,12 +67,12 @@ public class AvatarServiceImpl implements AvatarService {
             Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists()) {
                 return resource;
-            }else{
+            } else {
                 throw new NotFoundException("File not found " + fileName);
 
             }
 
-        }catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new NotFoundException("File not found " + fileName, e);
         }
     }

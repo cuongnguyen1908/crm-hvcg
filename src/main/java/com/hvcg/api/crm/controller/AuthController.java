@@ -13,14 +13,12 @@ import com.hvcg.api.crm.repository.UserRepository;
 import com.hvcg.api.crm.security.jwt.JwtUtils;
 import com.hvcg.api.crm.security.service.UserDetailImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,8 +35,7 @@ import java.util.stream.Collectors;
 public class AuthController {
 
 
-
-    AuthenticationManager authenticationManager ;
+    AuthenticationManager authenticationManager;
 
     public AuthController(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;

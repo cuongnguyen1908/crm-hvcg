@@ -1,13 +1,18 @@
 package com.hvcg.api.crm.dto;
 
+import com.hvcg.api.crm.entity.Avatar;
+
 import java.util.Date;
 
 public class CustomerDTO {
 
+    private Long id;
 
     private String firstName;
 
     private String lastName;
+
+    private String fullName;
 
     private String email;
 
@@ -17,15 +22,36 @@ public class CustomerDTO {
 
     private boolean gender;
 
+    private Long avatarId;
+
+    private String avatarUrl;
 
 
-    public CustomerDTO() {
+    public CustomerDTO(Long id, String firstName, String lastName, String fullName, String email, Date dayOfBirth,
+                       String phone, boolean gender, Long avatarId, String avatarUrl) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.fullName = fullName;
+        this.email = email;
+        this.dayOfBirth = dayOfBirth;
+        this.phone = phone;
+        this.gender = gender;
+        this.avatarId = avatarId;
+        this.avatarUrl = avatarUrl;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
         return firstName;
     }
-
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -37,6 +63,14 @@ public class CustomerDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getEmail() {
@@ -71,4 +105,19 @@ public class CustomerDTO {
         this.gender = gender;
     }
 
+    public Long getAvatarId() {
+        return avatarId;
+    }
+
+    public void setAvatarId(Long avatarId) {
+        this.avatarId = avatarId;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
 }

@@ -19,5 +19,5 @@ public interface EmployeeAccountRepository extends JpaRepository<EmployeeAccount
     @Modifying
     @Transactional
     @Query(value = "UPDATE employee_account e SET e.deleteFlag = :status  WHERE e.id = :employeeAccountId")
-    void deleteAccountById(@Param("employeeAccountId") Long id, @Param("status") boolean status );
+    void deleteAccountById(@Param("employeeAccountId") Long id, @Param("status") boolean status);
 }

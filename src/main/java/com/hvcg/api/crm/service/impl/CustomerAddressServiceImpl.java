@@ -1,6 +1,8 @@
 package com.hvcg.api.crm.service.impl;
 
+import com.hvcg.api.crm.constant.Status;
 import com.hvcg.api.crm.dto.CustomerAddressDTO;
+import com.hvcg.api.crm.dto.createDTO.CustomerAddressCreateDTO;
 import com.hvcg.api.crm.entity.Customer;
 import com.hvcg.api.crm.entity.CustomerAddress;
 import com.hvcg.api.crm.exception.NotFoundException;
@@ -34,19 +36,20 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     }
 
     @Override
-    public void createCustomerAddress(CustomerAddressDTO customerAddressDto) {
-        Optional<Customer> optionalCustomer = this.customerRepository.findCustomerById(customerAddressDto.getCustomerId(), false);
+    public void createCustomerAddress(CustomerAddressCreateDTO dto) {
+        Optional<Customer> optionalCustomer =
+                this.customerRepository.findCustomerByIdAndDeleteFlag(dto.getCustomerId(), Status.ACTIVE.getStatus());
         if (optionalCustomer.isPresent()) {
             CustomerAddress customerAddressEntity = new CustomerAddress();
             customerAddressEntity.setCustomer(optionalCustomer.get());
-            customerAddressEntity.setAddress(customerAddressDto.getAddress());
-            customerAddressEntity.setContactPerson(customerAddressDto.getContactPerson());
-            customerAddressEntity.setContactPhone(customerAddressDto.getContactPhone());
-            customerAddressEntity.setDescription(customerAddressDto.getDescription());
+            customerAddressEntity.setAddress(dto.getAddress());
+            customerAddressEntity.setContactPerson(dto.getContactPerson());
+            customerAddressEntity.setContactPhone(dto.getContactPhone());
+            customerAddressEntity.setDescription(dto.getDescription());
             this.customerAddressRepository.save(customerAddressEntity);
 
         } else {
-            throw new NotFoundException("Customer id not found - " + customerAddressDto.getCustomerId());
+            throw new NotFoundException("Customer id not found - " + dto.getCustomerId());
         }
 
     }
