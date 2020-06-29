@@ -82,8 +82,13 @@ public class AuthController {
         }
 
         // Create new user's account
-        User user = new User(dto.getUsername(),
-                encoder.encode(dto.getPassword()));
+        User user = new User();
+        user.setUsername(dto.getUsername());
+        user.setPassword(encoder.encode(dto.getPassword()));
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setFullName(dto.getLastName() + " " + dto.getFirstName());
+//                encoder.encode(dto.getPassword()));
 
 
         Set<String> strRoles = dto.getRole();
