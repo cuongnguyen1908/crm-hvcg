@@ -56,7 +56,7 @@ public class AuthController {
 
 
     @PostMapping("/signin")
-    public ResponseEntity<JwtResponseDTO> authenticateUser(@RequestBody LoginDTO dto) {
+    public ResponseEntity<JwtResponseDTO> authenticateUser(LoginDTO dto) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
