@@ -27,7 +27,7 @@ public class CustomerAvatarDTO {
 //Long id, String firstName, String lastName, String fullName, String email, Date dayOfBirth,
 //                       String phone, boolean gender, Long avatarId, String avatarUrl
 
-    
+
 
     public CustomerAvatarDTO(Long id, String firstName, String lastName, String fullName, String email,
                              Date dayOfBirth, String phone, boolean gender) {
