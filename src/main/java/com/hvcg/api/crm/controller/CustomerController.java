@@ -1,11 +1,15 @@
 package com.hvcg.api.crm.controller;
 
 import com.hvcg.api.crm.constant.Status;
+import com.hvcg.api.crm.dto.AvatarDTO;
+import com.hvcg.api.crm.dto.CustomerAvatarDTO;
 import com.hvcg.api.crm.dto.CustomerDTO;
 import com.hvcg.api.crm.dto.ResponseDTO;
 import com.hvcg.api.crm.dto.createDTO.CustomerCreateDTO;
+import com.hvcg.api.crm.entity.Avatar;
 import com.hvcg.api.crm.entity.Customer;
 import com.hvcg.api.crm.exception.NotFoundException;
+import com.hvcg.api.crm.repository.AvatarRepository;
 import com.hvcg.api.crm.repository.CustomerRepository;
 import com.hvcg.api.crm.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -42,11 +46,17 @@ public class CustomerController {
 
 
     @GetMapping("/customers/{customerId}")
-    public CustomerDTO getCustomerById(@PathVariable Long customerId) {
-        CustomerDTO customerDTO = this.customerRepository.findCustomerById(customerId, Status.ACTIVE.getStatus())
+    public CustomerAvatarDTO getCustomerById(@PathVariable Long customerId) {
+        CustomerAvatarDTO customerAvatarDTO = this.customerRepository.findCustomerById(customerId, Status.ACTIVE.getStatus())
                 .orElseThrow(() -> new NotFoundException("Customer not found id - " + customerId));
 
-        return customerDTO;
+        Optional<AvatarDTO> avatar = this.customerRepository.findAvatarCustomById(customerId);
+        if (avatar.isPresent()) {
+            customerAvatarDTO.setAvatar(avatar.get());
+        }else{
+            customerAvatarDTO.setAvatar(null);
+        }
+        return customerAvatarDTO;
     }
 
     @PostMapping("/customers")

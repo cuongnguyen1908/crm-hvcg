@@ -1,5 +1,7 @@
 package com.hvcg.api.crm.repository;
 
+import com.hvcg.api.crm.dto.AvatarDTO;
+import com.hvcg.api.crm.dto.CustomerAvatarDTO;
 import com.hvcg.api.crm.dto.CustomerDTO;
 import com.hvcg.api.crm.entity.Avatar;
 import com.hvcg.api.crm.entity.Customer;
@@ -28,6 +30,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             "WHERE c.deleteFlag = :status")
     Page<CustomerDTO> getAllCustomer(Pageable pageable, @Param("status") boolean status);
 
+
     @Query("FROM customer c WHERE c.deleteFlag = :status")
     Page<Customer> findAll(Pageable pageable, @Param("status") boolean deleteFlag);
 
@@ -35,10 +38,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     Optional<Customer> findCustomerByIdAndDeleteFlag(Long customerId, boolean status);
 
-    @Query("SELECT new com.hvcg.api.crm.dto.CustomerDTO(c.id, c.firstName, c.lastName, c.fullName, c.email, c" +
+    @Query("SELECT new com.hvcg.api.crm.dto.CustomerAvatarDTO(c.id, c.firstName, c.lastName, c.fullName, c.email, c" +
             ".dayOfBirth, c.phone, c.gender) " +
             "FROM customer c WHERE c.id = :customerId AND c.deleteFlag = :status")
-    Optional<CustomerDTO> findCustomerById(@Param("customerId") Long id, @Param("status") boolean deleteFlag);
+    Optional<CustomerAvatarDTO> findCustomerById(@Param("customerId") Long id, @Param("status") boolean deleteFlag);
 
 
     @Query("FROM customer c WHERE lower(c.fullName) like concat('%', lower(:searchValue), '%') and c.deleteFlag " +
@@ -50,6 +53,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Transactional
     @Query(value = "UPDATE customer SET avatar = :avatar  WHERE id = :customerId")
     void updateAvatar(@Param("avatar") Avatar avatar, @Param("customerId") Long id);
+
+    @Query(value = "SELECT new com.hvcg.api.crm.dto.AvatarDTO(c.avatar.id, c.avatar.name, c.avatar.url, c.avatar.thumbUrl) " +
+            "from customer c where c.id = :customerId")
+    Optional<AvatarDTO> findAvatarCustomById(@Param("customerId") Long id);
 
     @Query(value = "SELECT c.avatar from customer c where c.id = :customerId")
     Optional<Avatar> findAvatarById(@Param("customerId") Long id);
