@@ -16,26 +16,27 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Long>, PagingAndSortingRepository<Customer, Long> {
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     //Long id, String firstName, String lastName, String fullName,
-// String email, Date dayOfBirth,
-//                       String phone, boolean gender, Avatar avatar
+    // String email, Date dayOfBirth,
+    //                       String phone, boolean gender
     @Query("SELECT new com.hvcg.api.crm.dto.CustomerDTO(c.id, c.firstName, c.lastName, " +
             "c.fullName, c.email, " +
-            "c.dayOfBirth, c.phone, c.gender, c.avatar.id, c.avatar.url) " +
-            "FROM customer c WHERE c.deleteFlag = :status")
+            "c.dayOfBirth, c.phone, c.gender) " +
+            "FROM customer c " +
+            "WHERE c.deleteFlag = :status")
     Page<CustomerDTO> getAllCustomer(Pageable pageable, @Param("status") boolean status);
 
-    @Query("FROM customer c WHERE c.deleteFlag =?1")
-    Page<Customer> findAll(Pageable pageable, boolean deleteFlag);
+    @Query("FROM customer c WHERE c.deleteFlag = :status")
+    Page<Customer> findAll(Pageable pageable, @Param("status") boolean deleteFlag);
 
     boolean existsCustomerByIdAndDeleteFlag(Long customerId, boolean status);
 
     Optional<Customer> findCustomerByIdAndDeleteFlag(Long customerId, boolean status);
 
     @Query("SELECT new com.hvcg.api.crm.dto.CustomerDTO(c.id, c.firstName, c.lastName, c.fullName, c.email, c" +
-            ".dayOfBirth, c.phone, c.gender, c.avatar.id, c.avatar.url) " +
+            ".dayOfBirth, c.phone, c.gender) " +
             "FROM customer c WHERE c.id = :customerId AND c.deleteFlag = :status")
     Optional<CustomerDTO> findCustomerById(@Param("customerId") Long id, @Param("status") boolean deleteFlag);
 

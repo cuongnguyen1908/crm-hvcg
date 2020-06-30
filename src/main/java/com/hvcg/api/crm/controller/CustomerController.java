@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class CustomerController {
@@ -37,6 +39,7 @@ public class CustomerController {
     public Page<CustomerDTO> getAllCustomer(Pageable pageable) {
         return this.customerRepository.getAllCustomer(pageable, Status.ACTIVE.getStatus());
     }
+
 
     @GetMapping("/customers/{customerId}")
     public CustomerDTO getCustomerById(@PathVariable Long customerId) {
@@ -84,4 +87,3 @@ public class CustomerController {
 
 
 }
-

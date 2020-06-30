@@ -1,8 +1,7 @@
 package com.hvcg.api.crm.dto;
 
-import com.hvcg.api.crm.entity.Avatar;
-
 import java.util.Date;
+
 
 public class CustomerDTO {
 
@@ -22,13 +21,12 @@ public class CustomerDTO {
 
     private boolean gender;
 
-    private Long avatarId;
-
-    private String avatarUrl;
+//Long id, String firstName, String lastName, String fullName, String email, Date dayOfBirth,
+//                       String phone, boolean gender, Long avatarId, String avatarUrl
 
 
     public CustomerDTO(Long id, String firstName, String lastName, String fullName, String email, Date dayOfBirth,
-                       String phone, boolean gender, Long avatarId, String avatarUrl) {
+                       String phone, boolean gender) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -37,8 +35,6 @@ public class CustomerDTO {
         this.dayOfBirth = dayOfBirth;
         this.phone = phone;
         this.gender = gender;
-        this.avatarId = avatarId;
-        this.avatarUrl = avatarUrl;
     }
 
     public Long getId() {
@@ -105,19 +101,6 @@ public class CustomerDTO {
         this.gender = gender;
     }
 
-    public Long getAvatarId() {
-        return avatarId;
-    }
 
-    public void setAvatarId(Long avatarId) {
-        this.avatarId = avatarId;
-    }
 
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
 }
