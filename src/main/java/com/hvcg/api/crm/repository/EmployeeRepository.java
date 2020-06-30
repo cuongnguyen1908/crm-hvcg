@@ -15,14 +15,14 @@ import java.util.Date;
 import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-    @Query(value = "SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.email, e" +
+    @Query(value = "SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.gender, e.email, e" +
             ".phone, e.address, e.identityNumber, " +
             "e.position, e.bankName, e.bankAccount, e.dob, e.employeeAccount.username, e.employeeAccount.accountType" +
             ".name, e.region.name, e.region.aliasName) " +
             "FROM employee e WHERE e.deleteFlag = :status")
     Page<EmployeeDTO> findAllEmployee(Pageable pageable, @Param("status") boolean status);
 
-    @Query("SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.email, e.phone, " +
+    @Query("SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.gender, e.email, e.phone, " +
             "e.address, e.identityNumber, " +
             "e.position, e.bankName, e.bankAccount, e.dob, e.employeeAccount.username, e.employeeAccount.accountType" +
             ".name, e.region.name, e.region.aliasName) " +
@@ -31,7 +31,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Page<EmployeeDTO> searchAllEmployee(Pageable pageable, @Param("searchValue") String searchValue,
                                         @Param("status") boolean status);
 
-    @Query(value = "SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.email, e" +
+    @Query(value = "SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.gender, e.email, e" +
             ".phone, e.address, e.identityNumber, " +
             "e.position, e.bankName, e.bankAccount, e.dob, e.employeeAccount.username, e.employeeAccount.accountType" +
             ".name, e.region.name, e.region.aliasName) " +
@@ -57,6 +57,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "e.firstName = :firstName, " +
             "e.lastName = :lastName, " +
             "e.fullName = :fullName," +
+            "e.gender = :gender," +
             " e.dob = :dob, " +
             "e.email = :email, " +
             "e.address = :address, " +
@@ -70,6 +71,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     void updateEmployee(@Param("firstName") String firstName,
                         @Param("lastName") String lastName,
                         @Param("fullName") String fullName,
+                        @Param("gender") int gender,
                         @Param("dob") Date dob,
                         @Param("email") String email,
                         @Param("address") String address,

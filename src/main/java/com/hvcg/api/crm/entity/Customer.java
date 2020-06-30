@@ -48,7 +48,7 @@ public class Customer extends BaseEntity{
     private String phone;
 
     @Column(name = "gender")
-    private boolean gender;
+    private int gender;
 
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -112,14 +112,13 @@ public class Customer extends BaseEntity{
         this.phone = phone;
     }
 
-    public boolean isGender() {
+    public int getGender() {
         return gender;
     }
 
-    public void setGender(boolean gender) {
+    public void setGender(int gender) {
         this.gender = gender;
     }
-
 
     public Avatar getAvatar() {
         return avatar;

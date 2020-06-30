@@ -19,7 +19,7 @@ public class CustomerAvatarDTO {
 
     private String phone;
 
-    private boolean gender;
+    private int gender;
 
     private AvatarDTO avatar;
 
@@ -30,7 +30,7 @@ public class CustomerAvatarDTO {
 
 
     public CustomerAvatarDTO(Long id, String firstName, String lastName, String fullName, String email,
-                             Date dayOfBirth, String phone, boolean gender) {
+                             Date dayOfBirth, String phone, int gender) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -97,11 +97,11 @@ public class CustomerAvatarDTO {
         this.phone = phone;
     }
 
-    public boolean isGender() {
+    public int getGender() {
         return gender;
     }
 
-    public void setGender(boolean gender) {
+    public void setGender(int gender) {
         this.gender = gender;
     }
 

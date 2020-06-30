@@ -14,7 +14,7 @@ public class CustomerCreateDTO {
 
     private String phone;
 
-    private boolean gender;
+    private int gender;
 
     public String getFirstName() {
         return firstName;
@@ -56,11 +56,11 @@ public class CustomerCreateDTO {
         this.phone = phone;
     }
 
-    public boolean isGender() {
+    public int getGender() {
         return gender;
     }
 
-    public void setGender(boolean gender) {
+    public void setGender(int gender) {
         this.gender = gender;
     }
 }

@@ -19,7 +19,7 @@ public interface TaskAssignmentRepository extends JpaRepository<TaskAssignment, 
     void deleteTaskAssignByTaskId(@Param("taskId") Long id, @Param("status") boolean status);
 
     @Query(value = "SELECT new com.hvcg.api.crm.dto.EmployeeDTO(a.employee.id, a.employee.firstName, a.employee" +
-            ".lastName, a.employee.fullName, a.employee.email, a.employee.phone, a.employee.address, a.employee" +
+            ".lastName, a.employee.fullName, a.employee.gender , a.employee.email, a.employee.phone, a.employee.address, a.employee" +
             ".identityNumber, " +
             "a.employee.position, a.employee.bankName, a.employee.bankAccount, a.employee.dob, a.employee" +
             ".employeeAccount.username, a.employee.employeeAccount.accountType.name, a.employee.region.name, a" +

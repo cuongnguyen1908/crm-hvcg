@@ -1,6 +1,5 @@
 package com.hvcg.api.crm.dto;
 
-import com.hvcg.api.crm.entity.Avatar;
 
 import java.util.Date;
 
@@ -21,7 +20,7 @@ public class CustomerDTO {
 
     private String phone;
 
-    private boolean gender;
+    private int gender;
 
 
 //Long id, String firstName, String lastName, String fullName, String email, Date dayOfBirth,
@@ -29,7 +28,7 @@ public class CustomerDTO {
 
 
     public CustomerDTO(Long id, String firstName, String lastName, String fullName, String email, Date dayOfBirth,
-                       String phone, boolean gender) {
+                       String phone, int gender) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -96,13 +95,11 @@ public class CustomerDTO {
         this.phone = phone;
     }
 
-    public boolean isGender() {
+    public int getGender() {
         return gender;
     }
 
-    public void setGender(boolean gender) {
+    public void setGender(int gender) {
         this.gender = gender;
     }
-
-
 }

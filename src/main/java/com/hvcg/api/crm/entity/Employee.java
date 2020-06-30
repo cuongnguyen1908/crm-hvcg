@@ -30,6 +30,9 @@ public class Employee extends BaseEntity {
     @Column(name = "full_name")
     private String fullName;
 
+    @Column(name = "gender")
+    private int gender;
+
     @Column(name = "email")
     private String email;
 
@@ -182,5 +185,13 @@ public class Employee extends BaseEntity {
 
     public void setTaskAssignments(List<TaskAssignment> taskAssignments) {
         this.taskAssignments = taskAssignments;
+    }
+
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
     }
 }

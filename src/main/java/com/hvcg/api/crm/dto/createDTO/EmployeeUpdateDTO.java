@@ -7,6 +7,8 @@ public class EmployeeUpdateDTO {
 
     private String lastName;
 
+    private int gender;
+
     private Date dob;
 
     private String email;
@@ -111,5 +113,13 @@ public class EmployeeUpdateDTO {
 
     public void setRegionId(Long regionId) {
         this.regionId = regionId;
+    }
+
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
     }
 }

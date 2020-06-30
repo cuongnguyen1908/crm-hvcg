@@ -133,6 +133,7 @@ public class EmployeeController {
                     dto.getFirstName(),
                     dto.getLastName(),
                     dto.getFirstName() + " " + dto.getLastName(),
+                    dto.getGender(),
                     dto.getDob(),
                     dto.getEmail(),
                     dto.getAddress(),
