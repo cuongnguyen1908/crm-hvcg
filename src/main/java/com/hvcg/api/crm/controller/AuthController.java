@@ -60,7 +60,7 @@ public class AuthController {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        dto.getUsername(),
+                        dto.getEmail(),
                         dto.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -77,13 +77,13 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<ResponseDTO> registerUser(@RequestBody SignupDTO dto) {
-        if (userRepository.existsByUsername(dto.getUsername())) {
-            throw new NotFoundException("User has exist");
+        if (userRepository.existsByUsername(dto.getEmail())) {
+            throw new NotFoundException("Email has exist");
         }
 
         // Create new user's account
         User user = new User();
-        user.setUsername(dto.getUsername());
+        user.setUsername(dto.getEmail());
         user.setPassword(encoder.encode(dto.getPassword()));
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
