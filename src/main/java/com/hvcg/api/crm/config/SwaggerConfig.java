@@ -35,8 +35,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("REST API Document")
                 .description("It's api for crm")
-                .termsOfServiceUrl("localhost")
-                .version("1.0")
+                .version("2.0.0")
                 .build();
     }
 
