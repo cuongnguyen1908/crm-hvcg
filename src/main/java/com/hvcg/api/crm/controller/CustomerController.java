@@ -12,6 +12,8 @@ import com.hvcg.api.crm.exception.NotFoundException;
 import com.hvcg.api.crm.repository.AvatarRepository;
 import com.hvcg.api.crm.repository.CustomerRepository;
 import com.hvcg.api.crm.service.CustomerService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +39,6 @@ public class CustomerController {
 
     @Autowired
     private CustomerRepository customerRepository;
-
 
     @GetMapping("/customers")
     public Page<CustomerDTO> getAllCustomer(Pageable pageable) {
