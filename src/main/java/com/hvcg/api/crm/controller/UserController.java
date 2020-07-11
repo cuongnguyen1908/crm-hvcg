@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/")
 public class UserController {
 
     @Autowired
@@ -20,7 +20,7 @@ public class UserController {
 
 
 
-    @GetMapping("/users/{userId}")
+    @GetMapping("/users/getById{userId}")
     public UserDTO getUserById(@PathVariable Long userId) {
         UserDTO userDTO = this.userRepository.selectUserById(userId, Status.ACTIVE.getStatus())
                 .orElseThrow(() -> new NotFoundException("User not found id - " + userId));

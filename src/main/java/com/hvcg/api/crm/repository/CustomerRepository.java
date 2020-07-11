@@ -15,6 +15,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -28,7 +29,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             "c.dayOfBirth, c.phone, c.gender) " +
             "FROM customer c " +
             "WHERE c.deleteFlag = :status")
-    Page<CustomerDTO> getAllCustomer(Pageable pageable, @Param("status") boolean status);
+    List<CustomerDTO> getAllCustomer(@Param("status") boolean status);
 
 
     @Query("FROM customer c WHERE c.deleteFlag = :status")
@@ -44,10 +45,14 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Optional<CustomerAvatarDTO> findCustomerById(@Param("customerId") Long id, @Param("status") boolean deleteFlag);
 
 
-    @Query("FROM customer c WHERE lower(c.fullName) like concat('%', lower(:searchValue), '%') and c.deleteFlag " +
-            "=:status")
-    Page<Customer> searchAllCustomer(Pageable pageable, @Param("searchValue") String searchValue,
-                                     @Param("status") boolean status);
+    @Query("SELECT new com.hvcg.api.crm.dto.CustomerDTO(c.id, c.firstName, c.lastName, " +
+            "c.fullName, c.email, " +
+            "c.dayOfBirth, c.phone, c.gender) " +
+            "FROM customer c " +
+            "WHERE c.deleteFlag = :status " +
+            "AND lower(c.fullName) like concat('%', :textSearch, '%')")
+    Page<CustomerDTO> searchAllCustomerByFullName(Pageable pageable,
+                                     @Param("status") boolean status, @Param("textSearch") String textSearch);
 
     @Modifying
     @Transactional

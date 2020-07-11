@@ -26,12 +26,14 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/taskassignment")
 public class TaskAssignmentController {
 
     @Autowired
-    private TaskAssignmentRepository taskAssignmentRepository;
+    private ResponseDTO responseDTO;
 
+    @Autowired
+    private TaskAssignmentRepository taskAssignmentRepository;
 
     @Autowired
     private TaskRepository taskRepository;
@@ -40,7 +42,7 @@ public class TaskAssignmentController {
     private EmployeeRepository employeeRepository;
 
 
-    @PostMapping("/taskAssign")
+    @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createTaskAssign(@RequestBody TaskAssignmentCreateDTO dto) {
 
 
@@ -68,12 +70,13 @@ public class TaskAssignmentController {
         }
 
 
-        ResponseDTO responseDTO = new ResponseDTO("Assign success");
+        responseDTO.setContent(dto);
+        responseDTO.setMessage("Assign success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 
-    @GetMapping("/taskAssign/{taskId}")
+    @GetMapping("/getById/{taskId}")
     public List<EmployeeDTO> findAllEmployeeAssignByTaskId(@PathVariable Long taskId) {
         return this.taskAssignmentRepository.findAllEmployeeAssignmentByTaskId(taskId, Status.ACTIVE.getStatus());
     }

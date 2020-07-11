@@ -40,8 +40,13 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/task")
 public class TaskController {
+    @Autowired
+    private ResponseDTO responseDTO;
+
+    @Autowired
+    private ResponseDTO responseTestDTO;
 
     @Autowired
     private TaskRepository taskRepository;
@@ -64,33 +69,37 @@ public class TaskController {
     @Autowired
     private TaskAssignmentRepository taskAssignmentRepository;
 
-    @GetMapping("/taskList")
+    @GetMapping("/getAll")
     public Page<TaskDTO> getAllTask(Pageable pageable) {
         return this.taskService.finAll(pageable);
     }
 
-    @GetMapping("/taskList/{taskId}")
-    public TaskDTO getTaskById(@PathVariable Long taskId) {
+    @GetMapping("/getById/{taskId}")
+    public ResponseEntity<ResponseDTO> getTaskById(@PathVariable Long taskId) {
         TaskDTO taskDTO = this.taskRepository.findTaskAndAssignById(taskId, Status.ACTIVE.getStatus());
         List<EmployeeDTO> employeeDTO = this.taskAssignmentRepository.findAllEmployeeAssignmentByTaskId(taskId,
                 Status.ACTIVE.getStatus());
 
         taskDTO.setListAssignment(employeeDTO);
-        return taskDTO;
+
+        responseDTO.setContent(taskDTO);
+        responseDTO.setMessage(null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 
-    @DeleteMapping("/taskList/{taskId}")
+    @DeleteMapping("/delete/{taskId}")
     public ResponseEntity<ResponseDTO> deleteTask(@PathVariable Long taskId) {
         this.taskService.deleteTask(taskId, Status.IN_ACTIVE.getStatus());
 
-        ResponseDTO responseDTO = new ResponseDTO("Delete success");
+        responseDTO.setContent(true);
+        responseDTO.setMessage("Delete success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 
     //create task
-    @PostMapping("/taskList")
+    @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createTask(@RequestBody TaskCreateDTO dto) {
 
 
@@ -131,12 +140,13 @@ public class TaskController {
 
         this.taskRepository.save(task);
 
-        ResponseDTO responseDTO = new ResponseDTO("Create success");
+        responseDTO.setContent(dto);
+        responseDTO.setMessage("Create success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
     }
 
-    @PutMapping("/listTask/{taskId}")
+    @PutMapping("/update/{taskId}")
     public ResponseEntity<ResponseDTO> updateTask(@PathVariable Long taskId, @RequestBody TaskCreateDTO dto) {
 
         //check valid task status/ priority
@@ -185,7 +195,8 @@ public class TaskController {
             throw new NotFoundException("Not found task id - " + taskId);
         }
 
-        ResponseDTO responseDTO = new ResponseDTO("Update success");
+        responseDTO.setContent(dto);
+        responseDTO.setMessage("Update success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }

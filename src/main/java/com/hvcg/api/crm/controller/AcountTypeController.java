@@ -14,20 +14,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/accounttype")
 public class AcountTypeController {
 
     @Autowired
     private AccountTypeRepository accountTypeRepository;
 
-    @PostMapping("/accountType")
+    @Autowired
+    private ResponseDTO responseDTO;
+
+    @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createAccountType(@RequestBody AccountTypeCreateDTO dto) {
         AccountType accountTypeEntity = new AccountType();
         accountTypeEntity.setName(dto.getName());
         this.accountTypeRepository.save(accountTypeEntity);
 
-        ResponseDTO responseDTO = new ResponseDTO("Create success");
-
+        responseDTO.setContent(dto);
+        responseDTO.setMessage("Create success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

@@ -1,19 +1,12 @@
 package com.hvcg.api.crm.controller;
 
 import com.hvcg.api.crm.constant.Status;
-import com.hvcg.api.crm.dto.AvatarDTO;
-import com.hvcg.api.crm.dto.CustomerAvatarDTO;
-import com.hvcg.api.crm.dto.CustomerDTO;
-import com.hvcg.api.crm.dto.ResponseDTO;
+import com.hvcg.api.crm.dto.*;
 import com.hvcg.api.crm.dto.createDTO.CustomerCreateDTO;
-import com.hvcg.api.crm.entity.Avatar;
-import com.hvcg.api.crm.entity.Customer;
+import com.hvcg.api.crm.dto.updateDTO.CustomerUpdateDTO;
 import com.hvcg.api.crm.exception.NotFoundException;
-import com.hvcg.api.crm.repository.AvatarRepository;
 import com.hvcg.api.crm.repository.CustomerRepository;
 import com.hvcg.api.crm.service.CustomerService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/customers")
 public class CustomerController {
     @Autowired
     private CustomerService customerService;
@@ -40,61 +32,72 @@ public class CustomerController {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @GetMapping("/customers")
-    public Page<CustomerDTO> getAllCustomer(Pageable pageable) {
-        return this.customerRepository.getAllCustomer(pageable, Status.ACTIVE.getStatus());
+    @Autowired
+    private ResponseDTO responseDTO = null;
+
+    @GetMapping("/getAll")
+    public ResponseEntity<ResponseDTO> getAllCustomer() {
+        responseDTO.setContent(this.customerRepository.getAllCustomer(Status.ACTIVE.getStatus()));
+        responseDTO.setMessage(null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 
-    @GetMapping("/customers/{customerId}")
-    public CustomerAvatarDTO getCustomerById(@PathVariable Long customerId) {
-        CustomerAvatarDTO customerAvatarDTO = this.customerRepository.findCustomerById(customerId, Status.ACTIVE.getStatus())
-                .orElseThrow(() -> new NotFoundException("Customer not found id - " + customerId));
+    @GetMapping("/getById/{customerId}")
+    public ResponseEntity<ResponseDTO> getCustomerById(@PathVariable Long customerId) {
+        Optional<CustomerAvatarDTO> customerAvatarDTO = this.customerRepository
+                .findCustomerById(customerId, Status.ACTIVE.getStatus());
 
-        Optional<AvatarDTO> avatar = this.customerRepository.findAvatarCustomById(customerId);
-        if (avatar.isPresent()) {
-            customerAvatarDTO.setAvatar(avatar.get());
+        if(customerAvatarDTO.isPresent()){
+            AvatarDTO avatar = this.customerRepository.findAvatarCustomById(customerId).orElse(null);
+            customerAvatarDTO.get().setAvatar(avatar);
+            responseDTO.setContent(customerAvatarDTO);
+            responseDTO.setMessage(null);
         }else{
-            customerAvatarDTO.setAvatar(null);
+            responseDTO.setContent(null);
+            responseDTO.setMessage("Not found customer id - " + customerId);
         }
-        return customerAvatarDTO;
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+
     }
 
-    @PostMapping("/customers")
+    @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createCustomer(@RequestBody CustomerCreateDTO dto) {
         this.customerService.createCustomer(dto);
-
-        ResponseDTO responseDTO = new ResponseDTO("Create success");
+        responseDTO.setContent(dto);
+        responseDTO.setMessage("Create success");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+
     }
 
-    @DeleteMapping("/customers/{customerId}")
+    @PostMapping("/delete/{customerId}")
     public ResponseEntity<ResponseDTO> deleteCustomer(@PathVariable Long customerId) {
-        this.customerService.deleteCustomer(customerId);
-        ResponseDTO responseDTO = new ResponseDTO("Delete success");
-
+        responseDTO = this.customerService.deleteCustomer(customerId);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
     }
 
-    @PutMapping("/customers/{customerId}")
-    public ResponseEntity<ResponseDTO> updateCustomer(@PathVariable Long customerId,
-                                                      @RequestBody CustomerDTO dto) {
-        if (this.customerRepository.existsCustomerByIdAndDeleteFlag(customerId, Status.ACTIVE.getStatus())) {
-            this.customerService.updateCustomer(customerId, dto);
+    @PostMapping("/update")
+    public ResponseEntity<ResponseDTO> updateCustomer(@RequestBody CustomerUpdateDTO dto) {
+        if (this.customerRepository.existsCustomerByIdAndDeleteFlag(dto.getCustomerId(), Status.ACTIVE.getStatus())) {
+            responseDTO = this.customerService.updateCustomer(dto);
         } else {
-            throw new NotFoundException("Not found customer id - " + customerId);
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Update fail");
         }
-
-        ResponseDTO responseDTO = new ResponseDTO("Update success");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 
-    @GetMapping("/customers/find")
-    public Page<Customer> searchCustomers(Pageable pageable, @RequestParam("s") String s) {
-        return this.customerService.searchAllCustomer(pageable, s);
+    @GetMapping("/search")
+    public Page<CustomerDTO> searchCustomers(
+            Pageable pageable,
+            @RequestParam(value = "textSearch") Optional<String> textSearch) {
+        if (textSearch.isPresent()) {
+            return this.customerRepository.searchAllCustomerByFullName(pageable, Status.ACTIVE.getStatus(), textSearch.get().trim().toLowerCase());
+        }else{
+            return this.customerRepository.searchAllCustomerByFullName(pageable, Status.ACTIVE.getStatus(), "");
+
+        }
     }
-
-
 }

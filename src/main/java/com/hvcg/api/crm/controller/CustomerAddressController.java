@@ -29,7 +29,7 @@ import org.springframework.http.ResponseEntity;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/addresses")
 public class CustomerAddressController {
 
     @Autowired
@@ -41,22 +41,26 @@ public class CustomerAddressController {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @GetMapping("/addresses/{customerId}")
+    @Autowired
+    private ResponseDTO responseDTO;
+
+    @GetMapping("/getAll/{customerId}")
     public Page<CustomerAddressDTO> getAllCustomerAddressByCustomerId(@PathVariable String customerId,
                                                                       Pageable pageable) {
         return this.customerAddressService.findAllCustomerAddressByCustomerId(pageable, new Long(customerId),
                 Status.ACTIVE.getStatus());
     }
 
-    @PostMapping("/addresses")
+    @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createCustomerAddress(@RequestBody CustomerAddressCreateDTO dto) {
         this.customerAddressService.createCustomerAddress(dto);
-        ResponseDTO responseDTO = new ResponseDTO("Create success");
+        responseDTO.setContent(dto);
+        responseDTO.setMessage("Create success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 
-    @PutMapping("/addresses/{customerAddressId}")
+    @PutMapping("/update/{customerAddressId}")
     public ResponseEntity<ResponseDTO> updateCustomerAddress(@PathVariable Long customerAddressId,
                                                              @RequestBody CustomerAddressCreateDTO dto) {
         CustomerAddress customerAddress =
@@ -73,15 +77,17 @@ public class CustomerAddressController {
         customerAddress.setContactPerson(dto.getContactPerson());
         this.customerAddressRepository.save(customerAddress);
 
-        ResponseDTO responseDTO = new ResponseDTO("Update success");
+        responseDTO.setContent(dto);
+        responseDTO.setMessage("Update success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "apiKey")})
-    @DeleteMapping("/addresses/{customerAddressId}")
+    @DeleteMapping("/delete/{customerAddressId}")
     public ResponseEntity<ResponseDTO> deleteCustomer(@PathVariable Long customerAddressId) {
         this.customerAddressService.deleteCustomerAddressById(customerAddressId);
-        ResponseDTO responseDTO = new ResponseDTO("Delete success");
+        responseDTO.setContent(true);
+        responseDTO.setMessage("Delete success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

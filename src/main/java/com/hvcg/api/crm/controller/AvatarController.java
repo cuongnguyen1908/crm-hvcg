@@ -33,8 +33,11 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/avatars")
 public class AvatarController {
+
+    @Autowired
+    private ResponseDTO responseDTO;
 
     @Autowired
     private CustomerService customerService;
@@ -55,7 +58,7 @@ public class AvatarController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "apiKey")})
-    @PostMapping("avatars/change/{customerId}")
+    @PostMapping("/update/{customerId}")
     public ResponseEntity<ResponseDTO> changeImage(@PathVariable Long customerId,
                                                    @RequestParam("photo") MultipartFile photo) {
         //find customer by id
@@ -96,7 +99,8 @@ public class AvatarController {
             throw new NotFoundException("Customer not found id - " + customerId);
         }
 
-        ResponseDTO responseDTO = new ResponseDTO("Create success");
+        responseDTO.setContent(true);
+        responseDTO.setMessage("Create success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/employees")
 public class EmployeeController {
 
     @Autowired
@@ -51,13 +51,16 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    @GetMapping("/employees")
+    @Autowired
+    private ResponseDTO responseDTO;
+
+    @GetMapping("/getAll")
     public Page<EmployeeDTO> getAllCustomer(Pageable pageable) {
         return this.employeeRepository.findAllEmployee(pageable, Status.ACTIVE.getStatus());
     }
 
 
-    @PostMapping("/employees")
+    @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createEmployee(@RequestBody EmployeeCreateDTO dto) {
 
         //check user exist
@@ -82,28 +85,32 @@ public class EmployeeController {
         }
         this.employeeService.saveEmployee(dto, optionalRegion.get(), optionalAccountType.get());
 
-        ResponseDTO responseDTO = new ResponseDTO("Create success");
+        responseDTO.setContent(dto);
+        responseDTO.setMessage("Create success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    @GetMapping("employees/{employeeId}")
-    public EmployeeDTO getEmployeeById(@PathVariable Long employeeId) {
+    @GetMapping("/getById/{employeeId}")
+    public ResponseEntity<ResponseDTO> getEmployeeById(@PathVariable Long employeeId) {
         Optional<EmployeeDTO> optionalEmployeeDTO = this.employeeRepository.findEmployeeById(employeeId,
                 Status.ACTIVE.getStatus());
         if (optionalEmployeeDTO.isPresent()) {
-            return optionalEmployeeDTO.get();
+            responseDTO.setContent(optionalEmployeeDTO.get());
+            responseDTO.setMessage(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+
         } else {
             throw new NotFoundException("Can't find employee id - " + employeeId);
         }
 
     }
 
-    @GetMapping("/employees/find")
+    @GetMapping("/search")
     public Page<EmployeeDTO> searchCustomers(Pageable pageable, @RequestParam("s") String s) {
         return this.employeeRepository.searchAllEmployee(pageable, s, Status.ACTIVE.getStatus());
     }
 
-    @DeleteMapping("employees/{employeeId}")
+    @DeleteMapping("/delete/{employeeId}")
     public ResponseEntity<ResponseDTO> deleteEmployees(@PathVariable Long employeeId) {
         this.employeeRepository.findById(employeeId).orElseThrow(() -> new NotFoundException("Can't find employee id " +
                 "- " + employeeId));
@@ -113,11 +120,12 @@ public class EmployeeController {
         this.employeeRepository.deleteCustomerByID(employeeId, Status.IN_ACTIVE.getStatus());
 
 
-        ResponseDTO responseDTO = new ResponseDTO("Delete success");
+        responseDTO.setContent(true);
+        responseDTO.setMessage("Delete success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    @PutMapping("employees/{employeeId}")
+    @PutMapping("/update/{employeeId}")
     public ResponseEntity<ResponseDTO> updateEmployee(@PathVariable Long employeeId,
                                                       @RequestBody EmployeeUpdateDTO dto) {
         Optional<Region> optionalRegion = this.regionRepository.findByIdAndDeleteFlag(dto.getRegionId(),
@@ -125,7 +133,6 @@ public class EmployeeController {
         if (!optionalRegion.isPresent()) {
             throw new NotFoundException("Can't find region id - " + dto.getRegionId());
         }
-
 
         Optional<Employee> optionalEmployee = this.employeeRepository.findById(employeeId);
         if (optionalEmployee.isPresent()) {
@@ -149,7 +156,8 @@ public class EmployeeController {
         }
 
 
-        ResponseDTO responseDTO = new ResponseDTO("Update success");
+        responseDTO.setContent(dto);
+        responseDTO.setMessage("Update success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

@@ -37,6 +37,9 @@ public class AuthController {
 
     AuthenticationManager authenticationManager;
 
+    @Autowired
+    private ResponseDTO responseDTO;
+
     public AuthController(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
@@ -127,7 +130,8 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        ResponseDTO responseDTO = new ResponseDTO("Register success!");
+        responseDTO.setContent(dto);
+        responseDTO.setMessage("Register success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
     }

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/region")
 public class RegionController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegionController.class);
@@ -27,8 +27,11 @@ public class RegionController {
     @Autowired
     private RegionRepository regionRepository;
 
+    @Autowired
+    private ResponseDTO  responseDTO;
 
-    @PostMapping("/region")
+
+    @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createRegion(@RequestBody RegionCreateDTO dto) {
         if (this.regionRepository.existsRegionByName(dto.getName())) {
             LOGGER.error("Error 404...");
@@ -41,7 +44,8 @@ public class RegionController {
         this.regionRepository.save(region);
 
 
-        ResponseDTO responseDTO = new ResponseDTO("Create success");
+        responseDTO.setContent(dto);
+        responseDTO.setMessage("Create success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
     }
