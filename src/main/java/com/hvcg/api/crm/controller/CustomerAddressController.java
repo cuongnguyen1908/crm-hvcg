@@ -45,9 +45,9 @@ public class CustomerAddressController {
     private ResponseDTO responseDTO;
 
     @GetMapping("/getAll/{customerId}")
-    public Page<CustomerAddressDTO> getAllCustomerAddressByCustomerId(@PathVariable String customerId,
+    public Page<CustomerAddressDTO> getAllCustomerAddressByCustomerId(@PathVariable Long customerId,
                                                                       Pageable pageable) {
-        return this.customerAddressService.findAllCustomerAddressByCustomerId(pageable, new Long(customerId),
+        return this.customerAddressService.findAllCustomerAddressByCustomerId(pageable, customerId,
                 Status.ACTIVE.getStatus());
     }
 

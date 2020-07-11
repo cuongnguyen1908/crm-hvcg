@@ -1,5 +1,6 @@
 package com.hvcg.api.crm.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hvcg.api.crm.constant.Status;
 import com.hvcg.api.crm.dto.*;
 import com.hvcg.api.crm.dto.createDTO.CustomerCreateDTO;
@@ -43,29 +44,30 @@ public class CustomerController {
     }
 
 
-    @GetMapping("/getById/{customerId}")
-    public ResponseEntity<ResponseDTO> getCustomerById(@PathVariable Long customerId) {
+    @GetMapping("/getById")
+    public ResponseEntity<ResponseDTO> getCustomerById(@RequestParam(value = "customerId") Long customerId) {
         Optional<CustomerAvatarDTO> customerAvatarDTO = this.customerRepository
                 .findCustomerById(customerId, Status.ACTIVE.getStatus());
 
-        if(customerAvatarDTO.isPresent()){
+        customerAvatarDTO.ifPresentOrElse(res -> {
             AvatarDTO avatar = this.customerRepository.findAvatarCustomById(customerId).orElse(null);
-            customerAvatarDTO.get().setAvatar(avatar);
-            responseDTO.setContent(customerAvatarDTO);
+            res.setAvatar(avatar);
+            responseDTO.setContent(res);
             responseDTO.setMessage(null);
-        }else{
+        }, () -> {
             responseDTO.setContent(null);
             responseDTO.setMessage("Not found customer id - " + customerId);
-        }
+
+        });
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+
+
 
     }
 
     @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createCustomer(@RequestBody CustomerCreateDTO dto) {
-        this.customerService.createCustomer(dto);
-        responseDTO.setContent(dto);
-        responseDTO.setMessage("Create success");
+        responseDTO = this.customerService.createCustomer(dto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
     }
@@ -92,12 +94,14 @@ public class CustomerController {
     @GetMapping("/search")
     public Page<CustomerDTO> searchCustomers(
             Pageable pageable,
-            @RequestParam(value = "textSearch") Optional<String> textSearch) {
-        if (textSearch.isPresent()) {
-            return this.customerRepository.searchAllCustomerByFullName(pageable, Status.ACTIVE.getStatus(), textSearch.get().trim().toLowerCase());
-        }else{
-            return this.customerRepository.searchAllCustomerByFullName(pageable, Status.ACTIVE.getStatus(), "");
+            @RequestParam(value = "textSearch", required = false) String textSearch) {
 
+        if (textSearch != null && textSearch.length() > 0) {
+            return this.customerRepository
+                    .searchAllCustomerByFullName(pageable, Status.ACTIVE.getStatus(), textSearch.trim().toLowerCase());
         }
+        return this.customerRepository
+                .searchAllCustomerByFullName(pageable, Status.ACTIVE.getStatus(), "");
+
     }
 }
