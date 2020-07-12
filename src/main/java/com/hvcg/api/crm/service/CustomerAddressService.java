@@ -1,18 +1,20 @@
 package com.hvcg.api.crm.service;
 
-import com.hvcg.api.crm.dto.CustomerAddressDTO;
+import com.hvcg.api.crm.dto.ResponseDTO;
 import com.hvcg.api.crm.dto.createDTO.CustomerAddressCreateDTO;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.hvcg.api.crm.dto.updateDTO.CustomerAddressUpdateDTO;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 public interface CustomerAddressService {
 
-    Page<CustomerAddressDTO> findAllCustomerAddressByCustomerId(Pageable pageable, Long id, boolean status);
 
-    void deleteAllCustomerAddressByCustomerId(Long customerId, boolean status);
+    ResponseDTO createCustomerAddress(CustomerAddressCreateDTO dto, HttpServletRequest request);
 
-    void createCustomerAddress(CustomerAddressCreateDTO dto);
+    ResponseDTO deleteCustomerAddressById(Long customerAddressId);
 
-    void deleteCustomerAddressById(Long id);
+    ResponseDTO deleteCustomerAddressByCustomerId(Long customerId);
+
+    ResponseDTO updateCustomerAddress(CustomerAddressUpdateDTO dto);
 }

@@ -1,11 +1,11 @@
 package com.hvcg.api.crm.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hvcg.api.crm.Utilities.CommonUltils;
 import com.hvcg.api.crm.constant.Status;
 import com.hvcg.api.crm.dto.*;
 import com.hvcg.api.crm.dto.createDTO.CustomerCreateDTO;
 import com.hvcg.api.crm.dto.updateDTO.CustomerUpdateDTO;
-import com.hvcg.api.crm.exception.NotFoundException;
+import com.hvcg.api.crm.repository.CustomerAddressRepository;
 import com.hvcg.api.crm.repository.CustomerRepository;
 import com.hvcg.api.crm.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
@@ -34,6 +32,9 @@ public class CustomerController {
     private CustomerRepository customerRepository;
 
     @Autowired
+    private CustomerAddressRepository customerAddressRepository;
+
+    @Autowired
     private ResponseDTO responseDTO = null;
 
     @GetMapping("/getAll")
@@ -45,19 +46,21 @@ public class CustomerController {
 
 
     @GetMapping("/getById")
-    public ResponseEntity<ResponseDTO> getCustomerById(@RequestParam(value = "customerId") Long customerId) {
-        Optional<CustomerAvatarDTO> customerAvatarDTO = this.customerRepository
+    public ResponseEntity<ResponseDTO> getCustomerById(@RequestParam(value = "customerId") Long customerId, Pageable pageable) {
+        Optional<CustomerDetailDTO> customerDetailDTO = this.customerRepository
                 .findCustomerById(customerId, Status.ACTIVE.getStatus());
 
-        customerAvatarDTO.ifPresentOrElse(res -> {
-            AvatarDTO avatar = this.customerRepository.findAvatarCustomById(customerId).orElse(null);
+        customerDetailDTO.ifPresentOrElse(res -> {
+            AvatarDTO avatar = this.customerRepository
+                    .findAvatarCustomById(customerId).orElse(null);
+            Page<CustomerAddressDTO> customerAddress = this.customerAddressRepository
+                    .findAllCustomerAddressByCustomerId(pageable, customerId, Status.ACTIVE.getStatus());
+            res.setCustomerAddress(CommonUltils.setResponsePagingDTO(customerAddress));
             res.setAvatar(avatar);
             responseDTO.setContent(res);
             responseDTO.setMessage(null);
         }, () -> {
-            responseDTO.setContent(null);
             responseDTO.setMessage("Not found customer id - " + customerId);
-
         });
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
@@ -72,8 +75,8 @@ public class CustomerController {
 
     }
 
-    @PostMapping("/delete/{customerId}")
-    public ResponseEntity<ResponseDTO> deleteCustomer(@PathVariable Long customerId) {
+    @PostMapping("/delete")
+    public ResponseEntity<ResponseDTO> deleteCustomer(@RequestParam(value = "customerId") Long customerId) {
         responseDTO = this.customerService.deleteCustomer(customerId);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
@@ -92,16 +95,20 @@ public class CustomerController {
 
 
     @GetMapping("/search")
-    public Page<CustomerDTO> searchCustomers(
+    public ResponseEntity<ResponsePagingDTO> searchCustomers(
             Pageable pageable,
             @RequestParam(value = "textSearch", required = false) String textSearch) {
-
         if (textSearch != null && textSearch.length() > 0) {
-            return this.customerRepository
+            Page<CustomerDTO> result = this.customerRepository
                     .searchAllCustomerByFullName(pageable, Status.ACTIVE.getStatus(), textSearch.trim().toLowerCase());
+            return new ResponseEntity<>(CommonUltils.setResponsePagingDTO(result), HttpStatus.OK);
         }
-        return this.customerRepository
+
+        Page<CustomerDTO> result = this.customerRepository
                 .searchAllCustomerByFullName(pageable, Status.ACTIVE.getStatus(), "");
 
+        return new ResponseEntity<>(CommonUltils.setResponsePagingDTO(result), HttpStatus.OK);
+
     }
+
 }

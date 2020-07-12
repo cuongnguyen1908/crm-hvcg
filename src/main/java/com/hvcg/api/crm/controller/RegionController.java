@@ -34,15 +34,15 @@ public class RegionController {
     @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createRegion(@RequestBody RegionCreateDTO dto) {
         if (this.regionRepository.existsRegionByName(dto.getName())) {
-            LOGGER.error("Error 404...");
-            throw new NotFoundException("Region name has exist");
+            responseDTO.setContent(null);
+            responseDTO.setMessage("Region name has exist");
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         }
         Region region = new Region();
         region.setName(dto.getName());
         region.setAddress(dto.getAddress());
         region.setAliasName(dto.getAliasName());
         this.regionRepository.save(region);
-
 
         responseDTO.setContent(dto);
         responseDTO.setMessage("Create success!");

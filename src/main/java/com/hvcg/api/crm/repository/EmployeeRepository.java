@@ -20,7 +20,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "e.position, e.bankName, e.bankAccount, e.dob, e.employeeAccount.username, e.employeeAccount.accountType" +
             ".name, e.region.name, e.region.aliasName) " +
             "FROM employee e WHERE e.deleteFlag = :status")
-    Page<EmployeeDTO> findAllEmployee(Pageable pageable, @Param("status") boolean status);
+    EmployeeDTO getAllEmployee(@Param("status") boolean status);
 
     @Query("SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.gender, e.email, e.phone, " +
             "e.address, e.identityNumber, " +
@@ -28,7 +28,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             ".name, e.region.name, e.region.aliasName) " +
             "FROM employee e WHERE lower(e.fullName) like concat('%', lower(:searchValue), '%') and e.deleteFlag " +
             "=:status")
-    Page<EmployeeDTO> searchAllEmployee(Pageable pageable, @Param("searchValue") String searchValue,
+    Page<EmployeeDTO> searchAllEmployeeByFullname(Pageable pageable, @Param("searchValue") String searchValue,
                                         @Param("status") boolean status);
 
     @Query(value = "SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.gender, e.email, e" +
@@ -36,39 +36,46 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "e.position, e.bankName, e.bankAccount, e.dob, e.employeeAccount.username, e.employeeAccount.accountType" +
             ".name, e.region.name, e.region.aliasName) " +
             "FROM employee e WHERE e.deleteFlag = :status AND e.id = :employeeId")
-    Optional<EmployeeDTO> findEmployeeById(@Param("employeeId") Long employeeId, @Param("status") boolean status);
+    Optional<EmployeeDTO> getEmployeeById(@Param("employeeId") Long employeeId, @Param("status") boolean status);
 
 
     Optional<Employee> findEmployeeByIdAndDeleteFlag(Long id, boolean status);
+
+    boolean existsEmployeeByIdAndDeleteFlag(Long employeeId, boolean status);
+
 
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE employee e SET e.deleteFlag = :status  WHERE e.id = :employeeId")
-    void deleteCustomerByID(@Param("employeeId") Long id, @Param("status") boolean status);
+    void deleteCustomerById(@Param("employeeId") Long id, @Param("status") boolean status);
 
     @Query(value = "SELECT e.employeeAccount.id FROM employee e WHERE e.id = :employeeId")
-    Long findAccountIdByEmployeeId(@Param("employeeId") Long employeeId);
+    Long getEmployeeAccountIdByEmployeeId(@Param("employeeId") Long employeeId);
 
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE employee e SET " +
-            "e.firstName = :firstName, " +
-            "e.lastName = :lastName, " +
-            "e.fullName = :fullName," +
-            "e.gender = :gender," +
-            " e.dob = :dob, " +
-            "e.email = :email, " +
-            "e.address = :address, " +
-            "e.phone = :phone, " +
-            "e.identityNumber = :identityNumber, " +
-            "e.position = :position, " +
-            "e.bankName = :bankName, " +
-            "e.bankAccount = :bankAccount, " +
-            "e.region = :region " +
-            "WHERE e.id = :employeeId")
-    void updateEmployee(@Param("firstName") String firstName,
+    @Query(value = "UPDATE employee SET " +
+            "modified_by = :modifiedBy, " +
+            "modified_date = :modifiedDate, " +
+            "first_name = :firstName, " +
+            "last_name = :lastName, " +
+            "full_name = :fullName," +
+            "gender = :gender," +
+            "dob = :dob, " +
+            "email = :email, " +
+            "address = :address, " +
+            "phone = :phone, " +
+            "identity_number = :identityNumber, " +
+            "position = :position, " +
+            "bank_name = :bankName, " +
+            "bank_account = :bankAccount, " +
+            "region_id = :regionId " +
+            "WHERE id = :employeeId", nativeQuery = true)
+    void updateEmployee(@Param("modifiedBy") String modifiedBy,
+                        @Param("modifiedDate") Date modifiedDate,
+                        @Param("firstName") String firstName,
                         @Param("lastName") String lastName,
                         @Param("fullName") String fullName,
                         @Param("gender") int gender,
@@ -80,6 +87,28 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
                         @Param("position") String position,
                         @Param("bankName") String bankName,
                         @Param("bankAccount") String bankAccount,
-                        @Param("region") Region region,
+                        @Param("regionId") Long regionId,
                         @Param("employeeId") Long id);
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO employee(created_by,delete_flg,address,bank_account,bank_name,dob,email,first_name,full_name,gender,identity_number,last_name,phone, position, employee_account_id,region_id)" +
+            "VALUES(:createdBy, :status, :address, :bankAccount, :bankName, :dob, :email, :firstName, :fullName, :gender, :identityNumber, :lastName, :phone, :position, :accountId, :regionId)", nativeQuery = true)
+    void createEmployee(@Param("createdBy") String username,
+                        @Param("status") boolean status,
+                        @Param("firstName") String firstName,
+                        @Param("lastName") String lastName,
+                        @Param("fullName") String fullName,
+                        @Param("gender") int gender,
+                        @Param("dob") Date dob,
+                        @Param("email") String email,
+                        @Param("address") String address,
+                        @Param("phone") String phone,
+                        @Param("identityNumber") String identityNumber,
+                        @Param("position") String position,
+                        @Param("bankName") String bankName,
+                        @Param("bankAccount") String bankAccount,
+                        @Param("regionId") Long regionId,
+                        @Param("accountId") Long accountId );
 }

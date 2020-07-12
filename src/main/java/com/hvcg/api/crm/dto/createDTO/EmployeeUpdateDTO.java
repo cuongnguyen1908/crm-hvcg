@@ -3,6 +3,8 @@ package com.hvcg.api.crm.dto.createDTO;
 import java.util.Date;
 
 public class EmployeeUpdateDTO {
+    private Long employeeId;
+
     private String firstName;
 
     private String lastName;
@@ -121,5 +123,13 @@ public class EmployeeUpdateDTO {
 
     public void setGender(int gender) {
         this.gender = gender;
+    }
+
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
     }
 }

@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
 
@@ -52,7 +52,7 @@ public class AuthController {
 
 
     @Autowired
-    private PasswordEncoder encoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     JwtUtils jwtUtils;
@@ -87,7 +87,7 @@ public class AuthController {
         // Create new user's account
         User user = new User();
         user.setUsername(dto.getEmail());
-        user.setPassword(encoder.encode(dto.getPassword()));
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setFullName(dto.getLastName() + " " + dto.getFirstName());

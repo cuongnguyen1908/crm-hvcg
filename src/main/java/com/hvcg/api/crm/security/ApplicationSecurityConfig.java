@@ -42,7 +42,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-ui.html",
             "/webjars/**",
             "/login",
-            "/api/auth/**"
+            "/auth/**"
     };
 
     @Bean

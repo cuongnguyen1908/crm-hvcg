@@ -16,6 +16,8 @@ public class EmployeeCreateDTO {
 
     private String phone;
 
+    private int gender;
+
     private String identityNumber;
 
     private String position;
@@ -143,5 +145,13 @@ public class EmployeeCreateDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
     }
 }

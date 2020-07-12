@@ -3,6 +3,7 @@ package com.hvcg.api.crm.dto;
 
 import org.springframework.stereotype.Component;
 
+
 @Component
 public class ResponseDTO<T> {
 
@@ -10,11 +11,6 @@ public class ResponseDTO<T> {
     private String message;
 
     public ResponseDTO() {
-    }
-
-    public ResponseDTO(T content, String message) {
-        this.content = content;
-        this.message = message;
     }
 
     public T getContent() {

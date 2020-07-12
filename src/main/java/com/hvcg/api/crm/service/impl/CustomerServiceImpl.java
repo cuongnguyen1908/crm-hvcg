@@ -6,6 +6,7 @@ import com.hvcg.api.crm.dto.createDTO.CustomerCreateDTO;
 import com.hvcg.api.crm.dto.updateDTO.CustomerUpdateDTO;
 import com.hvcg.api.crm.entity.Avatar;
 import com.hvcg.api.crm.entity.Customer;
+import com.hvcg.api.crm.repository.CustomerAddressRepository;
 import com.hvcg.api.crm.repository.CustomerRepository;
 import com.hvcg.api.crm.service.CustomerAddressService;
 import com.hvcg.api.crm.service.CustomerService;
@@ -25,6 +26,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerAddressService customerAddressService;
+
+    @Autowired
+    private CustomerAddressRepository customerAddressRepository;
 
     @Autowired
     private ResponseDTO responseDTO;
@@ -67,25 +71,19 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public ResponseDTO deleteCustomer(Long customerId) {
-        //find customer
-        Optional<Customer> optionalCustomer = this.customerRepository
-                .findCustomerByIdAndDeleteFlag(customerId, Status.ACTIVE.getStatus());
+        if (this.customerRepository.existsCustomerByIdAndDeleteFlag(customerId, Status.ACTIVE.getStatus())){
 
-        optionalCustomer.ifPresentOrElse(res -> {
-            //delete child
-            this.customerAddressService
+            this.customerAddressRepository
                     .deleteAllCustomerAddressByCustomerId(customerId, Status.IN_ACTIVE.getStatus());
-            res.setDeleteFlag(Status.IN_ACTIVE.getStatus());
-            this.customerRepository.save(res);
+
+            this.customerRepository.deleteCustomerById(customerId, Status.IN_ACTIVE.getStatus());
             responseDTO.setContent(true);
             responseDTO.setMessage("Delete success");
-        }, () -> {
+        }else{
             responseDTO.setContent(false);
-            responseDTO.setMessage("Delete fail");
-        });
-
+            responseDTO.setMessage("Delete fail customerId' not found");
+        }
         return responseDTO;
-
     }
 
     @Override

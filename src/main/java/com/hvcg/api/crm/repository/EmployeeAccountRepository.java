@@ -7,17 +7,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 public interface EmployeeAccountRepository extends JpaRepository<EmployeeAccount, Long> {
 
-    @Query(value = "FROM employee_account e WHERE e.deleteFlag = :status")
-    Optional<EmployeeAccount> findByIdExist(@Param("status") boolean status);
-
-    Boolean existsByUsername(String username);
+    Boolean existsEmployeeAccountByUsername(String username);
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE employee_account e SET e.deleteFlag = :status  WHERE e.id = :employeeAccountId")
     void deleteAccountById(@Param("employeeAccountId") Long id, @Param("status") boolean status);
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO employee_account(created_by, delete_flg, username, password, account_type_id) " +
+            "VALUES(:createdBy, :status, :username, :password, :accountTypeId)", nativeQuery = true)
+    void createEmployeeAccount(@Param("createdBy") String createBy, @Param("status") boolean status,
+                               @Param("username") String username, @Param("password") String password,
+                               @Param("accountTypeId") Long accountTypeId);
+
+    @Transactional
+    @Query(value = "SELECT LAST_INSERT_ID()",  nativeQuery = true)
+    int getIdLastInsert();
 }

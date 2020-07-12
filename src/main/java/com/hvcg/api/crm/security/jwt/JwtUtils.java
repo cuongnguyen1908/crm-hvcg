@@ -18,10 +18,19 @@ import java.util.Date;
 
 @Component
 public class JwtUtils {
+
+
 	private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-	@Value("${application.jwt.secretKey}")
-	private String jwtSecret;
+	private static String secretKey;
+
+	public JwtUtils(@Value("${application.jwt.secretKey}") String secretKey) {
+		this.secretKey = secretKey;
+	}
+
+
+//	@Value("${application.jwt.secretKey}")
+//	public static String jwtSecret;
 
 	@Value("${application.jwt.tokenExpirationAfterDays}")
 	private int jwtExpirationDay;
@@ -38,17 +47,18 @@ public class JwtUtils {
 				.claim("authorities", userPrincipal.getAuthorities())
 				.setIssuedAt(new Date())
 				.setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtExpirationDay)))
-				.signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+				.signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
 				.compact();
 	}
 
-	public String getUserNameFromJwtToken(String token) {
-		return Jwts.parser().setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes())).parseClaimsJws(token).getBody().getSubject();
+	public static String getUserNameFromJwtToken(String token) {
+		return Jwts.parser().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).parseClaimsJws(token).getBody().getSubject();
 	}
 
 	public boolean validateJwtToken(String authToken) {
 		try {
-			Jwts.parser().setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+
+			Jwts.parser().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
 					.parseClaimsJws(authToken);
 			return true;
 		} catch (SignatureException e) {

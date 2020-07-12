@@ -11,16 +11,12 @@ public class CustomerAddressDTO {
 
     private String description;
 
-    private Long customerId;
-
-    public CustomerAddressDTO(Long id, String address, String contactPerson, String contactPhone, String description,
-                              Long customerId) {
+    public CustomerAddressDTO(Long id, String address, String contactPerson, String contactPhone, String description) {
         this.id = id;
         this.address = address;
         this.contactPerson = contactPerson;
         this.contactPhone = contactPhone;
         this.description = description;
-        this.customerId = customerId;
     }
 
     public Long getId() {
@@ -63,11 +59,4 @@ public class CustomerAddressDTO {
         this.description = description;
     }
 
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
-    }
 }

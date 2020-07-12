@@ -1,9 +1,11 @@
 package com.hvcg.api.crm.controller;
 
 
+import com.hvcg.api.crm.Utilities.CommonUltils;
 import com.hvcg.api.crm.constant.Status;
 import com.hvcg.api.crm.dto.EmployeeDTO;
 import com.hvcg.api.crm.dto.ResponseDTO;
+import com.hvcg.api.crm.dto.ResponsePagingDTO;
 import com.hvcg.api.crm.dto.createDTO.EmployeeCreateDTO;
 import com.hvcg.api.crm.dto.createDTO.EmployeeUpdateDTO;
 import com.hvcg.api.crm.entity.AccountType;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @RestController
@@ -55,109 +58,116 @@ public class EmployeeController {
     private ResponseDTO responseDTO;
 
     @GetMapping("/getAll")
-    public Page<EmployeeDTO> getAllCustomer(Pageable pageable) {
-        return this.employeeRepository.findAllEmployee(pageable, Status.ACTIVE.getStatus());
+    public ResponseEntity<ResponseDTO> getAllCustomer() {
+        responseDTO.setContent(this.employeeRepository.getAllEmployee(Status.ACTIVE.getStatus()));
+        responseDTO.setMessage(null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+
     }
 
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseDTO> createEmployee(@RequestBody EmployeeCreateDTO dto) {
-
-        //check user exist
-        if (this.employeeAccountRepository.existsByUsername(dto.getUsername())) {
-            throw new NotFoundException("User name has exist");
+    public ResponseEntity<ResponseDTO> createEmployee(@RequestBody EmployeeCreateDTO dto, HttpServletRequest request) {
+        //check valid gender
+        if (!(dto.getGender() == 0 || dto.getGender() == 1 || dto.getGender() == 2)) {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Create fail by Gender invalid");
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         }
-        ;
+
+        //check username of accountEmployee exist
+        if (this.employeeAccountRepository.existsEmployeeAccountByUsername(dto.getUsername())) {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Username has exist");
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        };
 
         //check region exist
-        Optional<Region> optionalRegion = this.regionRepository.findByIdAndDeleteFlag(dto.getRegionId(),
-                Status.ACTIVE.getStatus());
-        if (!optionalRegion.isPresent()) {
-            throw new NotFoundException("Region not found");
-        }
+
+        if (!this.regionRepository.existsRegionByIdAndDeleteFlag(dto.getRegionId(), Status.ACTIVE.getStatus())) {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Not found region id - " + dto.getRegionId());
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        };
 
         //check account type exist
-        Optional<AccountType> optionalAccountType =
-                this.accountTypeRepository.findAccountTypeByIdAndDeleteFlag(dto.getTypeAccountId(),
-                        Status.ACTIVE.getStatus());
-        if (!optionalAccountType.isPresent()) {
-            throw new NotFoundException("Region not found");
-        }
-        this.employeeService.saveEmployee(dto, optionalRegion.get(), optionalAccountType.get());
+        if (!this.accountTypeRepository.existsAccountTypeByIdAndDeleteFlag(dto.getTypeAccountId(), Status.ACTIVE.getStatus())) {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Not found accountType id - " + dto.getTypeAccountId());
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        };
+
+
+        this.employeeService.createEmployee(dto, request);
 
         responseDTO.setContent(dto);
         responseDTO.setMessage("Create success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/getById/{employeeId}")
-    public ResponseEntity<ResponseDTO> getEmployeeById(@PathVariable Long employeeId) {
-        Optional<EmployeeDTO> optionalEmployeeDTO = this.employeeRepository.findEmployeeById(employeeId,
+    @GetMapping("/getById")
+    public ResponseEntity<ResponseDTO> getEmployeeById(@RequestParam Long employeeId) {
+        Optional<EmployeeDTO> optionalEmployee = this.employeeRepository.getEmployeeById(employeeId,
                 Status.ACTIVE.getStatus());
-        if (optionalEmployeeDTO.isPresent()) {
-            responseDTO.setContent(optionalEmployeeDTO.get());
+
+        optionalEmployee.ifPresentOrElse(res -> {
+            responseDTO.setContent(res);
             responseDTO.setMessage(null);
+        },() -> {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Can't find employee id - " + employeeId);
+        });
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
-        } else {
-            throw new NotFoundException("Can't find employee id - " + employeeId);
-        }
-
     }
+
 
     @GetMapping("/search")
-    public Page<EmployeeDTO> searchCustomers(Pageable pageable, @RequestParam("s") String s) {
-        return this.employeeRepository.searchAllEmployee(pageable, s, Status.ACTIVE.getStatus());
+    public ResponseEntity<ResponsePagingDTO> searchEmployees(
+            Pageable pageable,
+            @RequestParam(value = "textSearch", required = false) String textSearch) {
+        if (textSearch != null && textSearch.length() > 0) {
+            Page<EmployeeDTO> result = this.employeeRepository
+                    .searchAllEmployeeByFullname(pageable, textSearch.trim().toLowerCase(), Status.ACTIVE.getStatus());
+            return new ResponseEntity<>(CommonUltils.setResponsePagingDTO(result), HttpStatus.OK);
+        }
+
+        Page<EmployeeDTO> result = this.employeeRepository
+                .searchAllEmployeeByFullname(pageable, "", Status.ACTIVE.getStatus());
+
+        return new ResponseEntity<>(CommonUltils.setResponsePagingDTO(result), HttpStatus.OK);
+
     }
 
-    @DeleteMapping("/delete/{employeeId}")
-    public ResponseEntity<ResponseDTO> deleteEmployees(@PathVariable Long employeeId) {
-        this.employeeRepository.findById(employeeId).orElseThrow(() -> new NotFoundException("Can't find employee id " +
-                "- " + employeeId));
-
-        Long accountId = this.employeeRepository.findAccountIdByEmployeeId(employeeId);
-        this.employeeAccountRepository.deleteAccountById(accountId, Status.IN_ACTIVE.getStatus());
-        this.employeeRepository.deleteCustomerByID(employeeId, Status.IN_ACTIVE.getStatus());
-
-
-        responseDTO.setContent(true);
-        responseDTO.setMessage("Delete success!");
+    @PostMapping("/delete")
+    public ResponseEntity<ResponseDTO> deleteEmployees(@RequestParam Long employeeId) {
+        responseDTO = this.employeeService.deleteEmployee(employeeId);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    @PutMapping("/update/{employeeId}")
-    public ResponseEntity<ResponseDTO> updateEmployee(@PathVariable Long employeeId,
-                                                      @RequestBody EmployeeUpdateDTO dto) {
-        Optional<Region> optionalRegion = this.regionRepository.findByIdAndDeleteFlag(dto.getRegionId(),
-                Status.ACTIVE.getStatus());
-        if (!optionalRegion.isPresent()) {
-            throw new NotFoundException("Can't find region id - " + dto.getRegionId());
+    @PostMapping("/update")
+    public ResponseEntity<ResponseDTO> updateEmployee(@RequestBody EmployeeUpdateDTO dto, HttpServletRequest request) {
+        //check valid gender
+        if (!(dto.getGender() == 0 || dto.getGender() == 1 || dto.getGender() == 2)) {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Create fail by Gender invalid");
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         }
 
-        Optional<Employee> optionalEmployee = this.employeeRepository.findById(employeeId);
-        if (optionalEmployee.isPresent()) {
-            this.employeeRepository.updateEmployee(
-                    dto.getFirstName(),
-                    dto.getLastName(),
-                    dto.getFirstName() + " " + dto.getLastName(),
-                    dto.getGender(),
-                    dto.getDob(),
-                    dto.getEmail(),
-                    dto.getAddress(),
-                    dto.getPhone(),
-                    dto.getIdentityNumber(),
-                    dto.getPosition(),
-                    dto.getBankName(),
-                    dto.getBankAccount(),
-                    optionalRegion.get(),
-                    employeeId);
+        //check region exist
+
+        if (!this.regionRepository.existsRegionByIdAndDeleteFlag(dto.getRegionId(), Status.ACTIVE.getStatus())) {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Not found region id - " + dto.getRegionId());
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        };
+
+        if (this.employeeRepository.existsEmployeeByIdAndDeleteFlag(dto.getEmployeeId(), Status.ACTIVE.getStatus())) {
+            responseDTO = this.employeeService.updateEmployee(dto, request);
         } else {
-            throw new NotFoundException("Can't find employee id - " + employeeId);
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Update fail employee not found id - " + dto.getEmployeeId());
         }
-
-
-        responseDTO.setContent(dto);
-        responseDTO.setMessage("Update success!");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
