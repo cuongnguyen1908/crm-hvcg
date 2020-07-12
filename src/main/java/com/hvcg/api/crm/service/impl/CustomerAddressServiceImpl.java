@@ -7,11 +7,9 @@ import com.hvcg.api.crm.dto.createDTO.CustomerAddressCreateDTO;
 import com.hvcg.api.crm.dto.updateDTO.CustomerAddressUpdateDTO;
 import com.hvcg.api.crm.entity.CustomerAddress;
 import com.hvcg.api.crm.repository.CustomerAddressRepository;
-import com.hvcg.api.crm.security.jwt.JwtUtils;
 import com.hvcg.api.crm.service.CustomerAddressService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,13 +52,13 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
 
     }
 
-    @Override
-    public ResponseDTO deleteCustomerAddressByCustomerId(Long customerId) {
-            this.customerAddressRepository.deleteAllCustomerAddressByCustomerId(customerId, Status.IN_ACTIVE.getStatus());
-            responseDTO.setContent(true);
-            responseDTO.setMessage("Delete success");
-        return responseDTO;
-    }
+//    @Override
+//    public ResponseDTO deleteCustomerAddressByCustomerId(Long customerId) {
+//            this.customerAddressRepository.deleteAllCustomerAddressByCustomerId(customerId, Status.IN_ACTIVE.getStatus());
+//            responseDTO.setContent(true);
+//            responseDTO.setMessage("Delete success");
+//        return responseDTO;
+//    }
 
     @Override
     public ResponseDTO updateCustomerAddress(CustomerAddressUpdateDTO dto) {

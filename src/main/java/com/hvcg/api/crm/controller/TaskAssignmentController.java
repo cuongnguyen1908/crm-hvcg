@@ -73,6 +73,6 @@ public class TaskAssignmentController {
 
     @GetMapping("/getById")
     public List<EmployeeDTO> findAllEmployeeAssignByTaskId(@RequestParam(value = "taskId") Long taskId) {
-        return this.taskAssignmentRepository.findAllEmployeeAssignmentByTaskId(taskId, Status.ACTIVE.getStatus());
+        return this.taskAssignmentRepository.getAllEmployeeAssignmentByTaskId(taskId, Status.ACTIVE.getStatus());
     }
 }

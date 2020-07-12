@@ -13,6 +13,15 @@ import java.util.List;
 
 public interface TaskAssignmentRepository extends JpaRepository<TaskAssignment, Long> {
 
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO task_assignment(created_by, employee_id, task_id) " +
+            "VALUES(:createdBy, :employeeId, :taskId)", nativeQuery = true)
+    void createTaskAssignment(@Param("createdBy") String createBy, @Param("employeeId") Long employeeId,
+                    @Param("taskId") Long taskId) ;
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE task_assignment t SET t.deleteFlag = :status  WHERE t.task.id = :taskId")
@@ -25,7 +34,10 @@ public interface TaskAssignmentRepository extends JpaRepository<TaskAssignment, 
             ".employeeAccount.username, a.employee.employeeAccount.accountType.name, a.employee.region.name, a" +
             ".employee.region.aliasName) " +
             "FROM task_assignment a WHERE a.deleteFlag = :status AND task.id = :taskId")
-    List<EmployeeDTO> findAllEmployeeAssignmentByTaskId(Long taskId, boolean status);
+    List<EmployeeDTO> getAllEmployeeAssignmentByTaskId(Long taskId, boolean status);
+
+
+
 
 
     boolean existsTaskAssignmentByTaskIdAndEmployeeId(Long taskId, Long employeeId);

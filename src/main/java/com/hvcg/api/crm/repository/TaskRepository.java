@@ -10,8 +10,24 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+import java.util.List;
+
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO task(created_by, description, name, start_date, customer_id, priority_id, status_id) " +
+            "VALUES(:createdBy, :description, :name, :startDate, :customerId, :priorityId, :statusId)", nativeQuery = true)
+    void createTask(@Param("createdBy") String createBy, @Param("description") String description, @Param("name") String name,
+                    @Param("startDate") Date startDate, @Param("customerId") Long customerId,
+                    @Param("priorityId") Long priorityId, @Param("statusId") Long statusId) ;
+
+    @Transactional
+    @Query(value = "SELECT LAST_INSERT_ID()",  nativeQuery = true)
+    int getIdLastInsert();
 
 
     @Modifying
@@ -24,7 +40,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
             "t.taskPrioriry.id, t.taskPrioriry.name, t.startDate) " +
             "FROM task t " +
             "WHERE t.id = :taskId AND t.deleteFlag = :status")
-    TaskDTO findTaskAndAssignById(@Param("taskId") Long taskId, @Param("status") boolean status);
+    TaskDTO getTaskById(@Param("taskId") Long taskId, @Param("status") boolean status);
 
 
     @Query(value = "SELECT new com.hvcg.api.crm.dto.TaskDTO(" +
@@ -32,7 +48,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
             "t.taskPrioriry.id, t.taskPrioriry.name, t.startDate) " +
             "FROM task t " +
             "WHERE t.deleteFlag = :status")
-    Page<TaskDTO> findAllTask(Pageable pageable, @Param("status") boolean status);
+    List<TaskDTO> getAllTask(@Param("status") boolean status);
 
     boolean existsTaskByIdAndDeleteFlag(Long taskId, boolean status);
 

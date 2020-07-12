@@ -5,14 +5,9 @@ import com.hvcg.api.crm.constant.Status;
 import com.hvcg.api.crm.dto.ResponseDTO;
 import com.hvcg.api.crm.dto.createDTO.EmployeeCreateDTO;
 import com.hvcg.api.crm.dto.createDTO.EmployeeUpdateDTO;
-import com.hvcg.api.crm.entity.AccountType;
-import com.hvcg.api.crm.entity.Employee;
-import com.hvcg.api.crm.entity.EmployeeAccount;
-import com.hvcg.api.crm.entity.Region;
 import com.hvcg.api.crm.repository.EmployeeAccountRepository;
 import com.hvcg.api.crm.repository.EmployeeRepository;
 import com.hvcg.api.crm.service.EmployeeService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

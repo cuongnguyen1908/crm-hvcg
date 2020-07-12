@@ -14,7 +14,5 @@ public interface CustomerAddressService {
 
     ResponseDTO deleteCustomerAddressById(Long customerAddressId);
 
-    ResponseDTO deleteCustomerAddressByCustomerId(Long customerId);
-
     ResponseDTO updateCustomerAddress(CustomerAddressUpdateDTO dto);
 }
