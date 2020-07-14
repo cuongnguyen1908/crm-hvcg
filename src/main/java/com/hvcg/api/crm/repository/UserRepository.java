@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "FROM user u WHERE u.id = :userId " +
             "AND deleteFlag = " +
             ":status")
-    Optional<UserDTO> selectUserById(@Param("userId") Long userId, @Param("status") boolean status);
+    Optional<UserDTO> getUserById(@Param("userId") Long userId, @Param("status") boolean status);
 
 
 }

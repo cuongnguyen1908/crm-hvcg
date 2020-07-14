@@ -2,6 +2,7 @@ package com.hvcg.api.crm.service;
 
 import com.hvcg.api.crm.dto.TaskDTO;
 import com.hvcg.api.crm.dto.createDTO.TaskCreateDTO;
+import com.hvcg.api.crm.dto.updateDTO.TaskUpdateDTO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -12,6 +13,7 @@ public interface TaskService {
 
     void createTask(TaskCreateDTO dto, boolean isNull, HttpServletRequest request);
 
+    void updateTask(TaskUpdateDTO dto, boolean isNull, HttpServletRequest request);
 
     void deleteTask(Long taskId, boolean status);
 }

@@ -7,6 +7,7 @@ import com.hvcg.api.crm.dto.ResponseDTO;
 import com.hvcg.api.crm.dto.TaskDTO;
 import com.hvcg.api.crm.dto.createDTO.TaskCreateDTO;
 
+import com.hvcg.api.crm.dto.updateDTO.TaskUpdateDTO;
 import com.hvcg.api.crm.entity.Customer;
 import com.hvcg.api.crm.entity.TaskPrioriry;
 import com.hvcg.api.crm.entity.Task;
@@ -31,7 +32,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -71,16 +74,18 @@ public class TaskController {
     @GetMapping("/getById")
     public ResponseEntity<ResponseDTO> getTaskById(@RequestParam(value = "taskId") Long taskId) {
         //get task
-        TaskDTO taskDTO = this.taskRepository.getTaskById(taskId, Status.ACTIVE.getStatus());
+        Optional<TaskDTO> optionalTaskDTO = this.taskRepository.getTaskById(taskId, Status.ACTIVE.getStatus());
 
-        //get list emp had assign
-        List<EmployeeDTO> employeeDTO = this.taskAssignmentRepository
-                .getAllEmployeeAssignmentByTaskId(taskId, Status.ACTIVE.getStatus());
-
-        taskDTO.setListAssignment(employeeDTO);
-
-        responseDTO.setContent(taskDTO);
-        responseDTO.setMessage(null);
+        optionalTaskDTO.ifPresentOrElse(taskDTO -> {
+            List<EmployeeDTO> employeeDTO = this.taskAssignmentRepository
+                    .getAllEmployeeAssignmentByTaskId(taskId, Status.ACTIVE.getStatus());
+            taskDTO.setListAssignment(employeeDTO);
+            responseDTO.setContent(taskDTO);
+            responseDTO.setMessage(null);
+        }, () -> {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Task not found with id - " + taskId);
+        });
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
@@ -145,57 +150,64 @@ public class TaskController {
 
     }
 
-    @PutMapping("/update/{taskId}")
-    public ResponseEntity<ResponseDTO> updateTask(@PathVariable Long taskId, @RequestBody TaskCreateDTO dto) {
+    @PostMapping("/update")
+    public ResponseEntity<ResponseDTO> updateTask(@RequestBody TaskUpdateDTO dto, HttpServletRequest request) {
 
-//        //check valid task status/ priority
-//        TaskStatus taskStatus = this.taskStatusRepository.findById(dto.getTaskStatusId())
-//                .orElseThrow(() -> new RuntimeException("Task status not found id - " + dto.getTaskStatusId()));
-//
-//        TaskPrioriry taskPrioriry = this.taskPrioriryRepository.findById(dto.getTaskPrioriryId())
-//                .orElseThrow(() -> new RuntimeException("Task priority not found id - " + dto.getTaskStatusId()));
-//
-//        Customer customer = this.customerRepository.findById(dto.getCustomerId())
-//                .orElseThrow(() -> new RuntimeException("Customer not found id - " + dto.getCustomerId()));
-//
-//        if (this.taskRepository.existsTaskByIdAndDeleteFlag(taskId, Status.ACTIVE.getStatus())) {
-//
-//            Task task = new Task();
-//            task.setId(taskId);
-//            task.setDescription(dto.getDescription());
-//            task.setName(dto.getName());
-//            task.setStartDate(dto.getStartDate());
-//            task.setTaskStatus(taskStatus);
-//            task.setTaskPrioriry(taskPrioriry);
-//            task.setCustomer(customer);
-//
-//            List<Long> listEmployeeId = dto.getEmployeeId();
-//
-//            //delete all old employee has assign
-//            this.taskAssignmentRepository.deleteTaskAssignByTaskId(taskId, Status.IN_ACTIVE.getStatus());
-//
-//            if (listEmployeeId != null) {
-//
-//                listEmployeeId.forEach(id -> {
-//
-//                    Employee employee = this.employeeRepository.findEmployeeByIdAndDeleteFlag(id,
-//                            Status.ACTIVE.getStatus())
-//                            .orElseThrow(() -> new RuntimeException("Employee not found id - " + id));
-//                    TaskAssignment taskAssignment = new TaskAssignment();
-//                    taskAssignment.setEmployee(employee);
-//                    taskAssignment.setTask(task);
-//                    task.addTaskAssignment(taskAssignment);
-//                });
-//
-//            }
-//            this.taskRepository.save(task);
-//
-//        } else {
-//            throw new NotFoundException("Not found task id - " + taskId);
-//        }
+        //check valid task status/ priority
+        if (!this.taskStatusRepository.existsTaskStatusById(dto.getTaskStatusId())) {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Update fail taskStatus not found id - " + dto.getTaskStatusId());
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        }
 
-        responseDTO.setContent(dto);
-        responseDTO.setMessage("Update success!");
+        if (!this.taskPrioriryRepository.existsTaskPrioriryById(dto.getTaskPrioriryId())) {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Update fail taskPriority not found id - " + dto.getTaskPrioriryId());
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        }
+
+        if (!this.customerRepository.existsCustomerByIdAndDeleteFlag(dto.getCustomerId(), Status.ACTIVE.getStatus())) {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Update fail customer not found id - " + dto.getCustomerId());
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        }
+
+        if (this.taskRepository.existsTaskByIdAndDeleteFlag(dto.getTaskId(), Status.ACTIVE.getStatus())) {
+            if (!this.customerRepository.existsCustomerByIdAndDeleteFlag(dto.getCustomerId(), Status.ACTIVE.getStatus())) {
+                responseDTO.setContent(false);
+                responseDTO.setMessage("UPdate fail customer not found id - " + dto.getCustomerId());
+                return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+            }
+
+            boolean isNull = false;
+            boolean flgCheckAllMatchExistByEmployeeId = true;
+
+            if  (dto.getEmployeeId() == null) {
+                isNull = true;
+            }else{
+                if (dto.getEmployeeId().size() > 0) {
+                    isNull = false;
+                    flgCheckAllMatchExistByEmployeeId = dto.getEmployeeId().stream()
+                            .allMatch(employeeId -> this.employeeRepository
+                                    .existsEmployeeByIdAndDeleteFlag(employeeId, Status.ACTIVE.getStatus()));
+                }
+            }
+
+            if (isNull == false && flgCheckAllMatchExistByEmployeeId == false) {
+                responseDTO.setContent(false);
+                responseDTO.setMessage("Update fail some of the employeeId not match ");
+                return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+            }
+            this.taskService.updateTask(dto, isNull, request);
+            responseDTO.setContent(dto);
+            responseDTO.setMessage("Update success");
+
+        } else {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Update fail not found task with id - " + dto.getCustomerId());
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        }
+
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }

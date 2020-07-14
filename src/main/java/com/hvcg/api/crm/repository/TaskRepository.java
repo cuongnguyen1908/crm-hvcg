@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
@@ -40,7 +41,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
             "t.taskPrioriry.id, t.taskPrioriry.name, t.startDate) " +
             "FROM task t " +
             "WHERE t.id = :taskId AND t.deleteFlag = :status")
-    TaskDTO getTaskById(@Param("taskId") Long taskId, @Param("status") boolean status);
+    Optional<TaskDTO> getTaskById(@Param("taskId") Long taskId, @Param("status") boolean status);
 
 
     @Query(value = "SELECT new com.hvcg.api.crm.dto.TaskDTO(" +
@@ -49,6 +50,23 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
             "FROM task t " +
             "WHERE t.deleteFlag = :status")
     List<TaskDTO> getAllTask(@Param("status") boolean status);
+
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE task SET modified_by = :modifiedBy, modified_date = :modifiedDate, description = :description, " +
+            "name = :name, start_date = :startDate , customer_id = :customerId, priority_id = :priorityId, status_id = :statusId " +
+            "WHERE id = :taskId", nativeQuery = true)
+    void updateTask(@Param("modifiedBy") String modifiedBy,
+                    @Param("modifiedDate") Date modifiedDate,
+                    @Param("description") String description,
+                    @Param("name") String name,
+                    @Param("startDate") Date startDate,
+                    @Param("customerId") Long customerId,
+                    @Param("priorityId") Long priorityId,
+                    @Param("statusId") Long statusId,
+                    @Param("taskId") Long taskId);
 
     boolean existsTaskByIdAndDeleteFlag(Long taskId, boolean status);
 

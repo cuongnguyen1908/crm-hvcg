@@ -16,11 +16,11 @@ public class TaskDTO {
 
     private Long statusId;
 
-    private String nameStatus;
+    private String statusName;
 
     private Long priorityId;
 
-    private String namePrioriry;
+    private String priorityName;
 
     private Date startDate;
 
@@ -29,16 +29,16 @@ public class TaskDTO {
 
 
     public TaskDTO(Long id, String name, String description, Long customerId, String ownCustomer, Long statusId,
-                   String nameStatus, Long priorityId, String namePrioriry, Date startDate) {
+                   String statusName, Long priorityId, String priorityName, Date startDate) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.customerId = customerId;
         this.ownCustomer = ownCustomer;
         this.statusId = statusId;
-        this.nameStatus = nameStatus;
+        this.statusName = statusName;
         this.priorityId = priorityId;
-        this.namePrioriry = namePrioriry;
+        this.priorityName = priorityName;
         this.startDate = startDate;
     }
 
@@ -90,13 +90,7 @@ public class TaskDTO {
         this.statusId = statusId;
     }
 
-    public String getNameStatus() {
-        return nameStatus;
-    }
 
-    public void setNameStatus(String nameStatus) {
-        this.nameStatus = nameStatus;
-    }
 
     public Long getPriorityId() {
         return priorityId;
@@ -106,12 +100,20 @@ public class TaskDTO {
         this.priorityId = priorityId;
     }
 
-    public String getNamePrioriry() {
-        return namePrioriry;
+    public String getStatusName() {
+        return statusName;
     }
 
-    public void setNamePrioriry(String namePrioriry) {
-        this.namePrioriry = namePrioriry;
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
+    public String getPriorityName() {
+        return priorityName;
+    }
+
+    public void setPriorityName(String priorityName) {
+        this.priorityName = priorityName;
     }
 
     public Date getStartDate() {

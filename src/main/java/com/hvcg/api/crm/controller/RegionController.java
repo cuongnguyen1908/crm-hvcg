@@ -42,10 +42,10 @@ public class RegionController {
         region.setName(dto.getName());
         region.setAddress(dto.getAddress());
         region.setAliasName(dto.getAliasName());
-        this.regionRepository.save(region);
 
+        this.regionRepository.save(region);
         responseDTO.setContent(dto);
-        responseDTO.setMessage("Create success!");
+        responseDTO.setMessage("Create success");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
     }
