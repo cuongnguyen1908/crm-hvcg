@@ -19,16 +19,16 @@ import javax.persistence.JoinColumn;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class CustomerAddress extends BaseEntity{
 
-    @Column(name = "contact_person")
+    @Column(name = "contact_person", length = 250)
     private String contactPerson;
 
-    @Column(name = "contact_phone")
+    @Column(name = "contact_phone", length = 15)
     private String contactPhone;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 500)
     private String description;
 
-    @Column(name = "address")
+    @Column(name = "address", length = 500)
     private String address;
 
     @ManyToOne

@@ -21,37 +21,37 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Employee extends BaseEntity {
-    @Column(name = "first_name")
+    @Column(name = "first_name", length = 150)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", length = 150)
     private String lastName;
 
-    @Column(name = "full_name")
+    @Column(name = "full_name", length = 300)
     private String fullName;
 
     @Column(name = "gender")
     private int gender;
 
-    @Column(name = "email")
+    @Column(name = "email", length = 250)
     private String email;
 
-    @Column(name = "address")
+    @Column(name = "address", length = 500)
     private String address;
 
-    @Column(name = "phone")
+    @Column(name = "phone", length = 15)
     private String phone;
 
-    @Column(name = "identity_number")
+    @Column(name = "identity_number", length = 20)
     private String identityNumber;
 
-    @Column(name = "position")
+    @Column(name = "position", length = 250)
     private String position;
 
-    @Column(name= "bank_name")
+    @Column(name= "bank_name", length = 250)
     private String bankName;
 
-    @Column(name= "bank_account")
+    @Column(name= "bank_account", length = 20)
     private String bankAccount;
 
     @Column(name= "dob")

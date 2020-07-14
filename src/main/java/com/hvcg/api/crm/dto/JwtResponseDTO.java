@@ -7,7 +7,7 @@ public class JwtResponseDTO {
     private String username;
     private List<String> roles;
     private String token;
-    private String type = "Bearer";
+    private String type = "Bearer ";
 
     public JwtResponseDTO(Long id, String username, List<String> roles, String token) {
         this.id = id;

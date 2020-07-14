@@ -8,10 +8,6 @@ import com.hvcg.api.crm.dto.ResponseDTO;
 import com.hvcg.api.crm.dto.ResponsePagingDTO;
 import com.hvcg.api.crm.dto.createDTO.EmployeeCreateDTO;
 import com.hvcg.api.crm.dto.createDTO.EmployeeUpdateDTO;
-import com.hvcg.api.crm.entity.AccountType;
-import com.hvcg.api.crm.entity.Employee;
-import com.hvcg.api.crm.entity.Region;
-import com.hvcg.api.crm.exception.NotFoundException;
 import com.hvcg.api.crm.repository.AccountTypeRepository;
 import com.hvcg.api.crm.repository.EmployeeAccountRepository;
 import com.hvcg.api.crm.repository.EmployeeRepository;
@@ -25,11 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
@@ -141,7 +134,22 @@ public class EmployeeController {
 
     @PostMapping("/delete")
     public ResponseEntity<ResponseDTO> deleteEmployees(@RequestParam Long employeeId) {
-        responseDTO = this.employeeService.deleteEmployee(employeeId);
+        //exist employee
+        if (!this.employeeRepository.existsEmployeeByIdAndDeleteFlag(employeeId, Status.ACTIVE.getStatus())) {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Delete fail employeeId' not found with id - " + employeeId);
+        }
+        Long accountEmployeeId = this.employeeRepository.getEmployeeAccountIdByEmployeeId(employeeId);
+        if (accountEmployeeId != null){
+            this.employeeAccountRepository.deleteAccountById(accountEmployeeId, Status.IN_ACTIVE.getStatus());
+            this.employeeRepository.deleteCustomerById(employeeId, Status.IN_ACTIVE.getStatus());
+            responseDTO.setContent(true);
+            responseDTO.setMessage("Delete success");
+        }else{
+            this.employeeRepository.deleteCustomerById(employeeId, Status.IN_ACTIVE.getStatus());
+            responseDTO.setContent(true);
+            responseDTO.setMessage("Delete success");
+        }
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
@@ -163,7 +171,9 @@ public class EmployeeController {
         };
 
         if (this.employeeRepository.existsEmployeeByIdAndDeleteFlag(dto.getEmployeeId(), Status.ACTIVE.getStatus())) {
-            responseDTO = this.employeeService.updateEmployee(dto, request);
+             this.employeeService.updateEmployee(dto, request);
+            responseDTO.setContent(dto);
+            responseDTO.setMessage("Update success");
         } else {
             responseDTO.setContent(false);
             responseDTO.setMessage("Update fail employee not found id - " + dto.getEmployeeId());

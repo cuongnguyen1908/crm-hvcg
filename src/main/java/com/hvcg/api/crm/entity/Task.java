@@ -22,13 +22,13 @@ import java.util.List;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Task extends BaseEntity{
 
-    @Column(name = "name")
+    @Column(name = "name", length = 250)
     private String name;
 
     @Column(name = "start_date")
     private Date startDate;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 500)
     private String description;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)

@@ -39,7 +39,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Optional<EmployeeDTO> getEmployeeById(@Param("employeeId") Long employeeId, @Param("status") boolean status);
 
 
-    Optional<Employee> findEmployeeByIdAndDeleteFlag(Long id, boolean status);
 
     boolean existsEmployeeByIdAndDeleteFlag(Long employeeId, boolean status);
 

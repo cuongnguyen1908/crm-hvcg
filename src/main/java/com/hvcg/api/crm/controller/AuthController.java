@@ -59,7 +59,7 @@ public class AuthController {
 
 
     @PostMapping("/signin")
-    public ResponseEntity<JwtResponseDTO> authenticateUser(@RequestBody LoginDTO dto) {
+    public ResponseEntity<ResponseDTO> authenticateUser(@RequestBody LoginDTO dto) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -73,8 +73,10 @@ public class AuthController {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(new JwtResponseDTO(userDetails.getUser().getId(),
+        responseDTO.setContent(new JwtResponseDTO(userDetails.getUser().getId(),
                 userDetails.getUser().getUsername(), roles, jwt));
+        responseDTO.setMessage(null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 
@@ -91,7 +93,7 @@ public class AuthController {
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setFullName(dto.getLastName() + " " + dto.getFirstName());
-//                encoder.encode(dto.getPassword()));
+//      encoder.encode(dto.getPassword()));
 
 
         Set<String> strRoles = dto.getRole();
@@ -131,7 +133,7 @@ public class AuthController {
         userRepository.save(user);
 
         responseDTO.setContent(dto);
-        responseDTO.setMessage("Register success!");
+        responseDTO.setMessage("Register success");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
     }

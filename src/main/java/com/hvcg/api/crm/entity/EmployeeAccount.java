@@ -20,10 +20,10 @@ import javax.persistence.FetchType;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class EmployeeAccount extends BaseEntity {
 
-    @Column(name = "username")
+    @Column(name = "username", length = 150)
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "password", length = 150)
     private String password;
 
     @ManyToOne(cascade = {

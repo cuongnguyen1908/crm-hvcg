@@ -2,7 +2,12 @@ package com.hvcg.api.crm.controller;
 
 import com.hvcg.api.crm.Utilities.CommonUltils;
 import com.hvcg.api.crm.constant.Status;
-import com.hvcg.api.crm.dto.*;
+import com.hvcg.api.crm.dto.ResponseDTO;
+import com.hvcg.api.crm.dto.CustomerDetailDTO;
+import com.hvcg.api.crm.dto.AvatarDTO;
+import com.hvcg.api.crm.dto.ResponsePagingDTO;
+import com.hvcg.api.crm.dto.CustomerDTO;
+import com.hvcg.api.crm.dto.CustomerAddressDTO;
 import com.hvcg.api.crm.dto.createDTO.CustomerCreateDTO;
 import com.hvcg.api.crm.dto.updateDTO.CustomerUpdateDTO;
 import com.hvcg.api.crm.repository.CustomerAddressRepository;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -70,14 +76,47 @@ public class CustomerController {
 
     @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createCustomer(@RequestBody CustomerCreateDTO dto) {
-        responseDTO = this.customerService.createCustomer(dto);
+
+        //valid gender
+        if (!(dto.getGender() == 0 || dto.getGender() == 1 || dto.getGender() == 2)) {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Create fail by Gender invalid");
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+
+        }
+
+        //valid birthday
+        if (dto.getDayOfBirth().after(new Date())) {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Birthday is bigger than current day");
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+
+        }
+
+        //valid phone is number
+        if (!dto.getPhone().matches("[0-9]+")) {
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Phone is invalid format");
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+
+        }
+        this.customerService.createCustomer(dto);
+        responseDTO.setContent(true);
+        responseDTO.setMessage("Create success");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
     }
 
     @PostMapping("/delete")
     public ResponseEntity<ResponseDTO> deleteCustomer(@RequestParam(value = "customerId") Long customerId) {
-        responseDTO = this.customerService.deleteCustomer(customerId);
+        if (this.customerRepository.existsCustomerByIdAndDeleteFlag(customerId, Status.ACTIVE.getStatus())){
+            this.customerService.deleteCustomer(customerId);
+            responseDTO.setContent(true);
+            responseDTO.setMessage("Delete success");
+        }else{
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Delete fail customerId not found with id - " + customerId);
+        }
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
     }
@@ -85,7 +124,9 @@ public class CustomerController {
     @PostMapping("/update")
     public ResponseEntity<ResponseDTO> updateCustomer(@RequestBody CustomerUpdateDTO dto) {
         if (this.customerRepository.existsCustomerByIdAndDeleteFlag(dto.getCustomerId(), Status.ACTIVE.getStatus())) {
-            responseDTO = this.customerService.updateCustomer(dto);
+            this.customerService.updateCustomer(dto);
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Update success");
         } else {
             responseDTO.setContent(false);
             responseDTO.setMessage("Update fail");

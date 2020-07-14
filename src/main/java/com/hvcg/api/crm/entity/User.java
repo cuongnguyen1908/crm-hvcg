@@ -25,19 +25,19 @@ public class User {
     @Column(name="id")
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "username", length = 250)
     private String username;
 
-    @Column(name= "password")
+    @Column(name= "password", length = 150)
     private String password;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", length = 150)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", length = 150)
     private String lastName;
 
-    @Column(name = "full_name")
+    @Column(name = "full_name", length = 300)
     private String fullName;
 
     @Column(name= "delete_flg", columnDefinition = "bit default 1", nullable = false)

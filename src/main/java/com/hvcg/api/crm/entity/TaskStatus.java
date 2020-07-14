@@ -19,7 +19,7 @@ public class TaskStatus {
     @Column(name="id")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", length = 250)
     private String name;
 
     @OneToMany(mappedBy = "taskStatus")

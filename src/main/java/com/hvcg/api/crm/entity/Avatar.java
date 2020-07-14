@@ -14,13 +14,13 @@ import javax.persistence.FetchType;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Avatar extends BaseEntity{
 
-    @Column(name="name")
+    @Column(name="name", length = 250)
     private String name;
 
-    @Column(name="url")
+    @Column(name="url", length = 500)
     private String url;
 
-    @Column(name="thumb_url")
+    @Column(name="thumb_url", length = 500)
     private String thumbUrl;
 
     @OneToOne(mappedBy = "avatar",

@@ -19,13 +19,13 @@ import java.util.List;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Region extends BaseEntity {
 
-    @Column(name = "name")
+    @Column(name = "name", length = 250)
     private String name;
 
-    @Column(name = "alias_name")
+    @Column(name = "alias_name", length = 250)
     private String aliasName;
 
-    @Column(name = "address")
+    @Column(name = "address", length = 500)
     private String address;
 
     @OneToMany(mappedBy = "region",

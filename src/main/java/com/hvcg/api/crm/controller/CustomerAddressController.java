@@ -8,9 +8,13 @@ import com.hvcg.api.crm.repository.CustomerAddressRepository;
 import com.hvcg.api.crm.repository.CustomerRepository;
 import com.hvcg.api.crm.service.CustomerAddressService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,9 +32,6 @@ public class CustomerAddressController {
     private CustomerAddressRepository customerAddressRepository;
 
     @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
     private ResponseDTO responseDTO;
 
 
@@ -40,10 +41,9 @@ public class CustomerAddressController {
     @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createCustomerAddress(@RequestBody CustomerAddressCreateDTO dto, HttpServletRequest request) {
 
-        System.out.println("Workd in controller");
-
-        responseDTO = this.customerAddressService.createCustomerAddress(dto, request);
-
+        this.customerAddressService.createCustomerAddress(dto, request);
+        responseDTO.setContent(true);
+        responseDTO.setMessage("Create success");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
@@ -51,7 +51,9 @@ public class CustomerAddressController {
     @PostMapping("/update")
     public ResponseEntity<ResponseDTO> updateCustomerAddress(@RequestBody CustomerAddressUpdateDTO dto) {
         if (this.customerAddressRepository.existsCustomerAddressByIdAndCustomerIdAndDeleteFlag(dto.getCustomerAddressId(), dto.getCustomerId(), Status.ACTIVE.getStatus())) {
-            responseDTO = this.customerAddressService.updateCustomerAddress(dto);
+            this.customerAddressService.updateCustomerAddress(dto);
+            responseDTO.setContent(dto);
+            responseDTO.setMessage("Update success");
         } else {
             responseDTO.setContent(false);
             responseDTO.setMessage("Update fail");
@@ -60,9 +62,18 @@ public class CustomerAddressController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<ResponseDTO> deleteCustomer(@RequestParam(value = "customerAddressId") Long customerAddressId) {
-        responseDTO = this.customerAddressService.deleteCustomerAddressById(customerAddressId);
+    public ResponseEntity<ResponseDTO> deleteCustomerAddress(@RequestParam(value = "customerAddressId") Long customerAddressId) {
+        if (this.customerAddressRepository
+                .existsCustomerAddressByIdAndDeleteFlag(customerAddressId, Status.ACTIVE.getStatus())) {
+            this.customerAddressRepository.deleteCustomerAddressById(customerAddressId, Status.IN_ACTIVE.getStatus());
+            responseDTO.setContent(true);
+            responseDTO.setMessage("Delete success");
+        }else{
+            responseDTO.setContent(false);
+            responseDTO.setMessage("Delete fail customerAddressId not exist");
+        }
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+
     }
 
 

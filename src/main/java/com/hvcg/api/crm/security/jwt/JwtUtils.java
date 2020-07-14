@@ -28,10 +28,6 @@ public class JwtUtils {
 		this.secretKey = secretKey;
 	}
 
-
-//	@Value("${application.jwt.secretKey}")
-//	public static String jwtSecret;
-
 	@Value("${application.jwt.tokenExpirationAfterDays}")
 	private int jwtExpirationDay;
 

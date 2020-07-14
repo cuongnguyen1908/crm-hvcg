@@ -20,7 +20,7 @@ import java.util.List;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class AccountType extends BaseEntity {
 
-    @Column(name = "name")
+    @Column(name = "name", length = 250)
     private String name;
 
 
