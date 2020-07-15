@@ -38,12 +38,13 @@ public class EmployeeDTO {
 
     private String regionAlias;
 
+    public EmployeeDTO() {
+    }
 
-
-
-    public EmployeeDTO(Long id, String firstName, String lastName, String fullName, int gender, String email, String address,
-                       String phone, String identityNumber, String position, String bankName, String bankAccount,
-                       Date dob, String username, String typeAccount, String regionName, String regionAlias) {
+    public EmployeeDTO(Long id, String firstName, String lastName, String fullName, int gender, String email,
+                       String address, String phone, String identityNumber, String position, String bankName,
+                       String bankAccount, Date dob, String username, String typeAccount, String regionName,
+                       String regionAlias) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -198,4 +199,6 @@ public class EmployeeDTO {
     public void setGender(int gender) {
         this.gender = gender;
     }
+
+
 }

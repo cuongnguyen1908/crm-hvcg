@@ -2,7 +2,6 @@ package com.hvcg.api.crm.repository;
 
 import com.hvcg.api.crm.dto.EmployeeDTO;
 import com.hvcg.api.crm.entity.Employee;
-import com.hvcg.api.crm.entity.Region;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,15 +11,20 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-    @Query(value = "SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.gender, e.email, e" +
-            ".phone, e.address, e.identityNumber, " +
-            "e.position, e.bankName, e.bankAccount, e.dob, e.employeeAccount.username, e.employeeAccount.accountType" +
-            ".name, e.region.name, e.region.aliasName) " +
+//    Long id, String firstName, String lastName, String fullName, int gender,
+//    String email, String address,
+//                       String phone, String identityNumber, String position, String bankName, String bankAccount,
+//                       Date dob, String username, String typeAccount, String regionName, String regionAlias
+    @Query(value = "SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.gender, e.email, e.address, " +
+            "e.phone, e.identityNumber, " +
+            "e.position, e.bankName, e.bankAccount, e.dob, e.employeeAccount.username, e.employeeAccount.accountType.name, " +
+            "e.region.name, e.region.aliasName) " +
             "FROM employee e WHERE e.deleteFlag = :status")
-    EmployeeDTO getAllEmployee(@Param("status") boolean status);
+    List<EmployeeDTO> getAllEmployee(@Param("status") boolean status);
 
     @Query("SELECT new com.hvcg.api.crm.dto.EmployeeDTO(e.id, e.firstName, e.lastName, e.fullName, e.gender, e.email, e.phone, " +
             "e.address, e.identityNumber, " +
