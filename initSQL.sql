@@ -25,9 +25,9 @@ insert into employee_account(username,password,account_type_id) values("01564658
 
 insert into employee_account(username,password,account_type_id) values("055464552", "123456", "2");
 
-insert into employee(address,bank_account,bank_name,email,first_name,full_name,identity_number,last_name,phone,position,employee_account_id,region_id)
-values("Hồ Chí Minh, Q1", "12345679","Vietcombank","duongnguyen@gmail.com", "Dương", "Nguyễn Lam Dương", "31235435135", "Nguyễn", "094654564", "Giám đốc", 1, 1);
+insert into employee(address,bank_account,bank_name,email,first_name,full_name,identity_number,last_name,phone,position,employee_account_id,region_id, gender)
+values("Hồ Chí Minh, Q1", "12345679","Vietcombank","duongnguyen@gmail.com", "Dương", "Nguyễn Lam Dương", "31235435135", "Nguyễn", "094654564", "Giám đốc", 1, 1, 1);
 
-insert into employee(address,bank_account,bank_name,email,first_name,full_name,identity_number,last_name,phone,position,employee_account_id,region_id)
-values("Hà Nội, Hai Bà Trưng", "4864646484","Techcombank","minhanh@gmail.com", "Minh Anh", "Nguyễn Minh Anh", "31235435135", "Nguyễn", "096468416", "Giao Hàng", 2, 2);
+insert into employee(address,bank_account,bank_name,email,first_name,full_name,identity_number,last_name,phone,position,employee_account_id,region_id, gender)
+values("Hà Nội, Hai Bà Trưng", "4864646484","Techcombank","minhanh@gmail.com", "Minh Anh", "Nguyễn Minh Anh", "31235435135", "Nguyễn", "096468416", "Giao Hàng", 2, 2, 2);
 
